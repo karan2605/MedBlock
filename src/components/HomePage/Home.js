@@ -1,31 +1,33 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
+import './Style.css';
 
-import './App.css';
-
-class App extends Component {
+class HomePage extends Component {
   render() {
     return (
       <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container px-lg-5">
-                <a class="navbar-brand" href="#!">MedBlock</a>
+                <a class="navbar-brand" href="#!"><i class="bi bi-box"></i>  MedBlock</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Login</a></li>
+                        <li class="nav-item"><Link to="/" class="nav-link">Home</Link></li>
+                        <li class="nav-item"><Link to='/login' class="nav-link">Login</Link></li>
                     </ul>
                 </div>
             </div>
         </nav>
-
+        
         <header class="py-5">
             <div class="container px-lg-5">
                 <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
                     <div class="m-4 m-lg-5">
                         <h1 class="display-5 fw-bold">Welcome to MedBlock</h1>
-                        <p class="fs-4">A data management system for healthcare patients and staff. Click below to create an account</p>
-                        <a class="btn btn-primary btn-lg" href="#!">Get Started</a>
+                        <p class="fs-4">A data management system for healthcare patients and staff</p>
+                        <Link to='/createaccount' class="btn btn-primary btn-lg"> 
+                            Create an Account  
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -97,9 +99,9 @@ class App extends Component {
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; MedBlock 2021</p></div>
         </footer>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+     </body>
     );
   }
 }
 
-export default App;
+export default HomePage;
