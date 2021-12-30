@@ -2,7 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CreateAccount from './CreateAccount/CreateAccount';
 import Login from './Login/Login';
-import Home from './HomePage/Home'
+import Home from './HomePage/Home';
+import Logout from './LogOut/LogOut';
+import PatientDash from './PatientDash/PatientDash';
+import WorkerDash from './WorkerDash/WorkerDash';
+import Notifications from './Notifications/Notifications';
+import DataLog from './DataLog/DataLog';
+
 
 function App() {
     return (
@@ -13,6 +19,15 @@ function App() {
               <Route exact path="/" element={<Home />}> </Route>
               <Route path="/createaccount" element={<CreateAccount />}></Route>
               <Route path="/login" element={<Login />}></Route>
+              <Route path="/logout" element={<Logout />}></Route>
+              <Route path="/patientdash" element={<PatientDash />}></Route>
+                <Route path="/patientdash/notfications" element={<Notifications/>}></Route>
+                <Route path="/patientdash/datalog" element={<DataLog/>}></Route>
+              <Route path="/workerdash" element={<WorkerDash />}></Route>
+                <Route path="/workerdash/notfications" element={<Notifications/>}></Route>
+               
+
+              
             </Routes>
           </div>
         </div>
