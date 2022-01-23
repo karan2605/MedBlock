@@ -1,0 +1,131 @@
+{
+  "contractName": "Login",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.0+commit.9e61f92b\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/src/contracts/Login.sol\":\"Login\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/src/contracts/Login.sol\":{\"keccak256\":\"0x0eaaf52865ba4d7adb3138e19f84c611a5749b977e22433b1cb4672323aa7971\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0305e65f58375af0705bd8323b5a2bd9afd10d6a74bb11c72ccf3b98388ff4fa\",\"dweb:/ipfs/QmPD7URTiAhr6oNLLbJrrVhvZVr2VH3VguNKRcY5RLNHQc\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212205c760a861fb42edec746058a84ac6422db767a08b5a51d5d76a612d237b81a1164736f6c63430007000033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212205c760a861fb42edec746058a84ac6422db767a08b5a51d5d76a612d237b81a1164736f6c63430007000033",
+  "immutableReferences": {},
+  "sourceMap": "65:23:1:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "65:23:1:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.7.0 <0.9.0;\n\ncontract Login {\n    \n}",
+  "sourcePath": "/Users/kp/Desktop/Third Year/CS310 Project/CS310-Project/src/contracts/Login.sol",
+  "ast": {
+    "absolutePath": "project:/src/contracts/Login.sol",
+    "exportedSymbols": {
+      "Login": [
+        33
+      ]
+    },
+    "id": 34,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 32,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.7",
+          ".0",
+          "<",
+          "0.9",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:31:1"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 33,
+        "linearizedBaseContracts": [
+          33
+        ],
+        "name": "Login",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 34,
+        "src": "65:23:1"
+      }
+    ],
+    "src": "32:56:1"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "project:/src/contracts/Login.sol",
+      "exportedSymbols": {
+        "Login": [
+          33
+        ]
+      },
+      "license": "MIT"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            ">=",
+            "0.7",
+            ".0",
+            "<",
+            "0.9",
+            ".0"
+          ]
+        },
+        "id": 32,
+        "name": "PragmaDirective",
+        "src": "32:31:1"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            33
+          ],
+          "name": "Login",
+          "nodes": [
+            null
+          ],
+          "scope": 34
+        },
+        "id": 33,
+        "name": "ContractDefinition",
+        "src": "65:23:1"
+      }
+    ],
+    "id": 34,
+    "name": "SourceUnit",
+    "src": "32:56:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.7.0+commit.9e61f92b.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.2",
+  "updatedAt": "2022-01-21T10:25:33.618Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
