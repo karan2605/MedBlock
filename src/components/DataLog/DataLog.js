@@ -10,8 +10,9 @@ class DataLog extends Component {
                 <a class="navbar-brand" href="#!"><i class="bi bi-box"></i>  MedBlock</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <span class="navbar-text justify-content-center">Patient Dashboard</span>
+                <span class="navbar-text justify-content-center">Data Log</span>
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <span className="navbar-text text-success p-2"> Account: { this.props.data.firstName} { this.props.data.lastName }</span>
                         <Link to="/logout" class="btn btn-danger">Log Out</Link>
                     </ul>
                 </div>
@@ -19,13 +20,12 @@ class DataLog extends Component {
             
             <div className='d-flex m-2 rounded-6 align-items-stretch'>
                 <div className='d-flex p-3'>
-                    <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills" activeKey="link-4">
-                        <Nav.Link href="/patientdash" eventKey="link-1">Dashboard</Nav.Link>
-                        <Nav.Link eventKey="link-2">Personal Data</Nav.Link>
-                        <Nav.Link eventKey="link-3">Medical Data</Nav.Link>
-                        <Nav.Link eventKey="link-4">Data Access Log</Nav.Link>
-                        <Nav.Link href="/patientdash/notfications" eventKey="link-5">Notifications</Nav.Link>
-                        <Nav.Link eventKey="link-6">Add New Data</Nav.Link>
+                    <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills">
+                        <Nav.Link><Link to= "/patientdash">Dashboard</Link></Nav.Link>
+                        <Nav.Link><Link to= "/patientdash/personaldata">Personal Data</Link></Nav.Link>
+                        <Nav.Link><Link to= "/patientdash/medicaldata">Medical Data</Link></Nav.Link>
+                        <Nav.Link active>Data Access Log</Nav.Link>
+                        <Nav.Link><Link to= "/patientdash/notifications">Notifications</Link></Nav.Link>
                     </Nav>
                 </div>
                 
