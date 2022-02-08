@@ -3,9 +3,14 @@ import { Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import './Style.css';
 
-async function handleLogin(){
+async function handlePatientLogin(){
     await window.ethereum.request({ method: 'eth_requestAccounts' });
     window.location.replace("http://localhost:3000/patientdash");
+}
+
+async function handleWorkerLogin(){
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+    window.location.replace("http://localhost:3000/workerdash");
 }
 
 const Login = () => {
@@ -30,7 +35,8 @@ const Login = () => {
                     <div className="m-4 m-lg-5">
                         <h1 className="display-5 fw-bold">Login</h1>
                         <br></br>
-                        <Button className="connectMetaMask" variant='danger' onClick={handleLogin}>Connect to MetaMask</Button>
+                        <Button className="connectMetaMask" variant='danger' onClick={handlePatientLogin}>Login as a Patient</Button>
+                        <Button className="connectMetaMask" variant='danger' onClick={handleWorkerLogin}>Login as a Medical Worker</Button>
                     </div>
                 </div>
             </div>
