@@ -98,8 +98,8 @@ class WorkerDash extends Component {
         this.props.data.appointments = data.appointments
         this.props.data.requests = data.requests
         this.props.data.notifications = data.notifications
-        this.props.data.bloodGroup = data.bloodGroup
-        this.props.data.existingHealth = data.existingHealth
+        this.props.data.placeOfWork = data.placeOfWork
+        this.props.data.role = data.role
     }
 
     render() {
@@ -111,6 +111,7 @@ class WorkerDash extends Component {
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <span class="navbar-text justify-content-center">Medical Worker Dashboard</span>
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <span className="navbar-text text-success p-2"> Account: { this.state.firstName} { this.state.lastName }</span>
                             <Link to="/logout" class="btn btn-danger">Log Out</Link>
                         </ul>
                     </div>
