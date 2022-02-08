@@ -17,15 +17,45 @@ class PatientDash extends Component {
 
     constructor(props) {
         super(props)
-        this.state = {
+        this.state = { 
+            contract : null,
+            priority : null,
+            email : null,
+            nhsNumber : null,
             account: null,
             firstName: null,
             lastName: null,
             dob : null,
             existingHealth : null,
+            bloodGroup : null,
             gp : null,
-            appointments : null,
-            notifications : null,
+            appointments : {
+                appointment : {
+                    date : null,
+                    time : null,
+                    place : null,
+                    doctor : null,
+                    notes : null
+                }
+            },
+            notifications : {
+                notification : {
+                    datetime: null,
+                    category: null,
+                    notification: null
+                }
+            },
+            prescriptions : {
+                prescription : {
+                    date : null,
+                    medicine : {
+                        name: null,
+                        dosageNotes : null
+                    },
+                    pharmacy : null,
+                    issuedBy : null
+                }
+            },
             requests : null
         };
     }
@@ -54,7 +84,7 @@ class PatientDash extends Component {
             const contract = new web3.eth.Contract(CreateAccount.abi, networkData.address);
             this.setState({contract: contract});
         } 
-        else {
+        else {  
             window.alert('Smart contract not deployed to detected network.');
         }
     }
@@ -62,31 +92,45 @@ class PatientDash extends Component {
     async fetchData() {
         const getHash = this.state.contract.methods.getHash().call({from: this.state.account})
         const hash = await getHash
-        console.log(hash)
         const raw_data = await ipfs.cat(hash)
         const data = JSON.parse(raw_data)
-        console.log(data)
 
-        this.setState({dob : data.dob})
-        this.setState({firstName : data.firstName})
-        this.setState({lastName : data.lastName})
-        this.setState({gp : data.gp})
-        this.setState({appointments : data.appointments})
-        this.setState({requests : data.requests})
-        this.setState({notifications : data.notifications})
+        this.setState({dob : data.dob, 
+            firstName : data.firstName, 
+            lastName : data.lastName, 
+            gp : data.gp, 
+            appointments : data.appointments, 
+            requests : data.requests, 
+            notifications : data.notifications, 
+            email : data.email, 
+            nhsNumber : data.nhsNumber,
+            bloodGroup : data.bloodGroup, 
+            existingHealth : data.existingHealth})
+
+        this.props.data.account = this.state.account
+        this.props.data.email = data.email
+        this.props.data.nhsNumber = data.nhsNumber
+        this.props.data.dob = data.dob
+        this.props.data.firstName = data.firstName
+        this.props.data.lastName = data.lastName
+        this.props.data.gp = data.gp
+        this.props.data.appointments = data.appointments
+        this.props.data.requests = data.requests
+        this.props.data.notifications = data.notifications
+        this.props.data.bloodGroup = data.bloodGroup
+        this.props.data.existingHealth = data.existingHealth
     }
-    
+
     render() {
         return (
-            <body>
+            <div>
                 <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                     <a className="navbar-brand" href="#!"><i className="bi bi-box"></i>  MedBlock</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button>
-                    
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <span className="navbar-text justify-content-start">Patient Dashboard</span>
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <span className="navbar-text text-success p-2" > Account: { this.state.firstName} { this.state.lastName }</span>
+                            <span className="navbar-text text-success p-2"> Account: { this.state.firstName} { this.state.lastName }</span>
                             <Link to="/logout" className="btn btn-danger">Log Out</Link>
                         </ul>
                     </div>
@@ -94,18 +138,16 @@ class PatientDash extends Component {
                 
                 <div className='d-flex m-2 rounded-6 align-items-stretch'>
                     <div className='d-flex p-3'>
-                        <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills" activeKey="link-1">
-                            <Nav.Link to="/patientdash" eventKey="link-1">Dashboard</Nav.Link>
-                            <Nav.Link to="/patientdash/personaldata" eventKey="link-2">Personal Data</Nav.Link>
-                            <Nav.Link eventKey="link-3">Medical Data</Nav.Link>
-                            <Nav.Link href="/patientdash/datalog" eventKey="link-4">Data Access Log</Nav.Link>
-                            <Nav.Link href="/patientdash/notfications" eventKey="link-5">Notifications</Nav.Link>
-                            <Nav.Link eventKey="link-6">Add New Data</Nav.Link>
+                        <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills">
+                            <Nav.Link active>Dashboard</Nav.Link>
+                            <Nav.Link><Link to= "/patientdash/personaldata">Personal Data</Link></Nav.Link>
+                            <Nav.Link><Link to= "/patientdash/medicaldata">Medical Data</Link></Nav.Link>
+                            <Nav.Link><Link to= "/patientdash/datalog">Data Access Log</Link></Nav.Link>
+                            <Nav.Link><Link to= "/patientdash/notifications">Notifications</Link></Nav.Link>
                         </Nav>
                     </div>
                     
                     <div className="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
-                        
                             <Card className="card text-center rounded-3">
                             <Card.Header as="h5">Notifications <Button variant="success">Details</Button></Card.Header>
                             <Card.Body>
@@ -211,11 +253,9 @@ class PatientDash extends Component {
                                 </Card>
                             </Card.Body>
                             </Card>
-                        
-                    
                     </div>
                 </div>
-            </body>
+            </div>
         )
     }
 }
