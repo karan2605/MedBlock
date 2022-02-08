@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Form from 'react-bootstrap/Form';
+import Tabs from 'react-bootstrap/Tabs'
+import Tab from 'react-bootstrap/Tab'
 import { Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import '../HomePage/Style.css';
@@ -24,16 +26,32 @@ class Createaccount extends Component {
             contract: null,
             web3: null,
             account: null,
-            date: new Date(),
-            field: [],
-            list: [{value:'One',selected:true},{value:'Two'},{value:'Three'},{value:'Four',label:'Four Label'}]
+            date: new Date()
         };
 
         this.options = [
             { value: 'Diabetes', label: 'Diabetes' },
             { value: 'High Blood Pressure', label: 'High Blood Pressure' },
-            { value: 'Dementia', label: 'Dementia' }
-          ]
+            { value: 'Dementia', label: 'Dementia' },
+            { value: 'Allergies', label: 'Allergies' },
+            { value: 'Arthritis', label: 'Arthritis' },
+            { value: 'Heart Disease', label: 'Heart Disease' }
+        ]
+
+        this.medicalRole = [
+            { value: 'GP', label: 'GP' },
+            { value: 'Surgeon', label: 'Surgeon' },
+            { value: 'Receptionist', label: 'Receptionist' },
+            { value: 'Nurse', label: 'Nurse' },
+            { value: 'Physiotherapist', label: 'Physiotherapist' },
+            { value: 'Consultant', label: 'Consultant' },
+            { value: 'Pharmacist', label: 'Pharmacist' }
+        ]
+
+        this.placeOfWork = [
+            { value: 'Stanmore Medical Centre', label: 'Stanmore Medical Centre' },
+            { value: 'William Drive Medical Centre', label: 'William Drive Medical Centre' },
+        ]
     }
 
     async loadWeb3() {
@@ -66,22 +84,48 @@ class Createaccount extends Component {
         }
     }
 
-    onSubmit = (event) => {
-        event.preventDefault();
+    onSubmitPatient = (event) => {
+        //event.preventDefault();
 
         const data = new File([JSON.stringify({
-            id: event.target[0].value,
+            id: this.state.account,
             firstName: event.target[1].value,
             lastName: event.target[2].value,
             dob: event.target[3].value,
             email: event.target[4].value,
-            gp: event.target[5].value,
-            bloodGroup: event.target[6].value,
-            existingHealth: event.target[7].value,
-            appointments: null,
-            notifications: null,
+            nhsNumber : event.target[5].value,
+            gp: event.target[6].value,
+            bloodGroup: event.target[7].value,
+            existingHealth: event.target[8].value,
+            appointments : {
+                appointment : {
+                    date : null,
+                    time : null,
+                    place : null,
+                    doctor : null,
+                    notes : null
+                }
+            },
+            notifications : {
+                notification : {
+                    datetime: null,
+                    category: null,
+                    notification: null
+                }
+            },
+            prescriptions : {
+                prescription : {
+                    date : null,
+                    medicine : {
+                        name: null,
+                        dosageNotes : null
+                    },
+                    pharmacy : null,
+                    issuedBy : null
+                }
+            },
             requests: null
-        })], event.target[0].value+".json");
+        })], this.state.account+".json");
 
         ipfs.add(data, (error, result) => {
             console.log('Ipfs result', result)
@@ -89,7 +133,48 @@ class Createaccount extends Component {
             console.error(error)
             return
             }
-            this.state.contract.methods.setHash(result[0].hash).send({from: this.state.account}).then(window.location.replace("http://localhost:3000/createaccount/success"))
+            this.state.contract.methods.setHash(result[0].hash).send({from: this.state.account})
+            .then(this.state.contract.methods.addNhsToAddr(event.target[5].value).send({from: this.state.account}))
+            .then(window.location.replace("http://localhost:3000/createaccount/success"))
+        })
+    };
+
+    onSubmitStaff = (event) => {
+        //event.preventDefault();
+
+        const data = new File([JSON.stringify({
+            id: this.state.account,
+            firstName: event.target[1].value,
+            lastName: event.target[2].value,
+            dob: event.target[3].value,
+            email: event.target[4].value,
+            nhsNumber: event.target[5].value,
+            placeOfWork: event.target[6].value,
+            role: event.target[7].value,
+            appointments : {
+                date : null,
+                time : null,
+                place : null,
+                patient : null,
+                notes : null
+            },
+            notifications : {
+                datetime: null,
+                category: null,
+                notification: null
+            },
+            requests: null
+        })], this.state.account+".json");
+
+        ipfs.add(data, (error, result) => {
+            console.log('Ipfs result', result)
+            if(error) {
+            console.error(error)
+            return
+            }
+            this.state.contract.methods.setHash(result[0].hash).send({from: this.state.account})
+            .then(this.state.contract.methods.addNhsToAddr(event.target[5].value).send({from: this.state.account}))
+            .then(window.location.replace("http://localhost:3000/createaccount/success"))
         })
     };
 
@@ -112,13 +197,14 @@ class Createaccount extends Component {
 
                 <div className="col-lg-5 col-md-5 col-sm-5 container">
                     <div className="d-flex justify-content-center align-items-center">
-                        <div className="p-4 p-lg-5 bg-light rounded-3">
+                        <div className="p-4 p-lg-5 bg-light rounded-3 flex-fill">
                             
                             <h1 className="display-5 fw-bold">Create Account</h1>
                             <p>Complete the form below to create a MedBlock account</p>
-                            <h2 className="display-10 fw-bold">Personal Details</h2>
-
-                            <Form onSubmit={this.onSubmit}>
+                            <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
+                                <Tab eventKey="home" title="Patient">
+                                <h2 className="display-10 fw-bold">Personal Details</h2>
+                                <Form onSubmit={this.onSubmitPatient}>
                                 <Form.Group className="mb-3" controlId="formUniqueId">
                                     <Form.Label>Unique Identifier:</Form.Label>
                                     <Form.Control type="text" placeholder={this.state.account} name="Id" disabled/>
@@ -143,6 +229,10 @@ class Createaccount extends Component {
 
                                 <h2 className="display-10 fw-bold">Medical Details</h2>
 
+                                <Form.Group className="mb-3" controlId="formBasicLastName">
+                                    <Form.Control type="text" placeholder="NHS Number" name="nhsNumber"/>
+                                </Form.Group>
+
                                 <Form.Group className="mb-3" controlId="formBasicGpName">
                                     <Form.Control type="text" placeholder="GP Name" name="gp"/>
                                 </Form.Group>
@@ -160,7 +250,53 @@ class Createaccount extends Component {
                                 <Button variant="danger" type="submit">
                                     Create Account
                                 </Button>
-                            </Form>
+                                </Form>
+
+                                </Tab>
+                                <Tab eventKey="profile" title="Medical Worker">
+                                <h2 className="display-10 fw-bold">Personal Details</h2>
+                                    <Form onSubmit={this.onSubmitStaff}>
+                                        <Form.Group className="mb-3" controlId="formUniqueId">
+                                            <Form.Label>Unique Identifier:</Form.Label>
+                                            <Form.Control type="text" placeholder={this.state.account} name="Id" disabled/>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="formBasicFirstName">
+                                            <Form.Control type="text" placeholder="First Name" name="fname"/>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="formBasicLastName">
+                                            <Form.Control type="text" placeholder="Last Name" name="lname"/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="DOB">
+                                            <Form.Label>Date of Birth:</Form.Label>
+                                            <Form.Control type="date" name="dob" placeholder="Date of Birth"/>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                                            <Form.Control type="email" placeholder="Email Address" name="email"/>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="formBasicLastName">
+                                            <Form.Control type="text" placeholder="NHS Staff Number" name="nhsNumber"/>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="formMedicalCond">
+                                            <Form.Label>Place of Work</Form.Label>
+                                            <Select options={this.placeOfWork} components={makeAnimated()}/>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="formMedicalCond">
+                                            <Form.Label>Role</Form.Label>
+                                            <Select options={this.medicalRole} components={makeAnimated()}/>
+                                        </Form.Group>
+                                    </Form>
+                                    <Button variant="danger" type="submit">
+                                        Create Account
+                                    </Button>
+                                </Tab>
+                            </Tabs>
                         </div>
                     </div>
                 </div>
