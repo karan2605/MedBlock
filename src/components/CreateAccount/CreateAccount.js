@@ -26,7 +26,11 @@ class Createaccount extends Component {
             contract: null,
             web3: null,
             account: null,
-            date: new Date()
+            date: new Date(),
+            nhsNumber: null,
+            role: null,
+            place: null,
+            existingHealth: null
         };
 
         this.options = [
@@ -85,7 +89,7 @@ class Createaccount extends Component {
     }
 
     onSubmitPatient = (event) => {
-        //event.preventDefault();
+        event.preventDefault();
 
         const data = new File([JSON.stringify({
             id: this.state.account,
@@ -96,7 +100,7 @@ class Createaccount extends Component {
             nhsNumber : event.target[5].value,
             gp: event.target[6].value,
             bloodGroup: event.target[7].value,
-            existingHealth: event.target[8].value,
+            existingHealth: this.state.existingHealth,
             appointments : {
                 appointment : {
                     date : null,
@@ -127,6 +131,8 @@ class Createaccount extends Component {
             requests: null
         })], this.state.account+".json");
 
+        this.setState({nhsNumber : event.target[5].value})
+
         ipfs.add(data, (error, result) => {
             console.log('Ipfs result', result)
             if(error) {
@@ -134,13 +140,13 @@ class Createaccount extends Component {
             return
             }
             this.state.contract.methods.setHash(result[0].hash).send({from: this.state.account})
-            .then(this.state.contract.methods.addNhsToAddr(event.target[5].value).send({from: this.state.account}))
+            .then(this.state.contract.methods.addNhsToAddr(this.state.nhsNumber).send({from: this.state.account}))
             .then(window.location.replace("http://localhost:3000/createaccount/success"))
         })
     };
 
     onSubmitStaff = (event) => {
-        //event.preventDefault();
+        event.preventDefault();
 
         const data = new File([JSON.stringify({
             id: this.state.account,
@@ -149,8 +155,8 @@ class Createaccount extends Component {
             dob: event.target[3].value,
             email: event.target[4].value,
             nhsNumber: event.target[5].value,
-            placeOfWork: event.target[6].value,
-            role: event.target[7].value,
+            placeOfWork: this.state.place,
+            role: this.state.role,
             appointments : {
                 date : null,
                 time : null,
@@ -166,6 +172,8 @@ class Createaccount extends Component {
             requests: null
         })], this.state.account+".json");
 
+        this.setState({nhsNumber : event.target[5].value})
+
         ipfs.add(data, (error, result) => {
             console.log('Ipfs result', result)
             if(error) {
@@ -173,10 +181,22 @@ class Createaccount extends Component {
             return
             }
             this.state.contract.methods.setHash(result[0].hash).send({from: this.state.account})
-            .then(this.state.contract.methods.addNhsToAddr(event.target[5].value).send({from: this.state.account}))
+            .then(this.state.contract.methods.addNhsToAddr(this.state.nhsNumber).send({from: this.state.account}))
             .then(window.location.replace("http://localhost:3000/createaccount/success"))
         })
     };
+
+    setRole = (e) => {
+        this.setState({ role: e });
+    }
+
+    setPlace= (e) => {
+        this.setState({ place: e });
+    }
+
+    setExistingHealth= (e) => {
+        this.setState({ existingHealth: e });
+    }
 
     render() {
         return (
@@ -243,7 +263,7 @@ class Createaccount extends Component {
                                 
                                 <Form.Group className="mb-3" controlId="formMedicalCond">
                                     <Form.Label>Existing Health Conditions</Form.Label>
-                                    <Select options={this.options} isMulti closeMenuOnSelect={false} components={makeAnimated()}/>
+                                    <Select options={this.options} isMulti closeMenuOnSelect={false} components={makeAnimated()} onChange={this.setExistingHealth}/>
                                 </Form.Group>
                                 <br></br>
 
@@ -284,17 +304,18 @@ class Createaccount extends Component {
 
                                         <Form.Group className="mb-3" controlId="formMedicalCond">
                                             <Form.Label>Place of Work</Form.Label>
-                                            <Select options={this.placeOfWork} components={makeAnimated()}/>
+                                            <Select options={this.placeOfWork} components={makeAnimated()} onChange={this.setPlace}/>
                                         </Form.Group>
 
                                         <Form.Group className="mb-3" controlId="formMedicalCond">
                                             <Form.Label>Role</Form.Label>
-                                            <Select options={this.medicalRole} components={makeAnimated()}/>
+                                            <Select options={this.medicalRole} components={makeAnimated()} onChange={this.setRole}/>
                                         </Form.Group>
+
+                                        <Button variant="danger" type="submit">
+                                            Create Account
+                                        </Button>
                                     </Form>
-                                    <Button variant="danger" type="submit">
-                                        Create Account
-                                    </Button>
                                 </Tab>
                             </Tabs>
                         </div>
