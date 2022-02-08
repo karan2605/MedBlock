@@ -5,6 +5,8 @@ import "./style.css";
 import CreateAccount from '../../abis/CreateAccount.json';
 
 const Web3 = require('web3');
+const ipfsClient = require('ipfs-http-client')
+const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class PatientDash extends Component {
     async componentDidMount() {
@@ -16,7 +18,15 @@ class PatientDash extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            account: null
+            account: null,
+            firstName: null,
+            lastName: null,
+            dob : null,
+            existingHealth : null,
+            gp : null,
+            appointments : null,
+            notifications : null,
+            requests : null
         };
     }
 
@@ -50,8 +60,20 @@ class PatientDash extends Component {
     }
 
     async fetchData() {
-        const patientData = this.state.contract.methods.getHash().call({from: this.state.account})
-        console.log(patientData.result)
+        const getHash = this.state.contract.methods.getHash().call({from: this.state.account})
+        const hash = await getHash
+        console.log(hash)
+        const raw_data = await ipfs.cat(hash)
+        const data = JSON.parse(raw_data)
+        console.log(data)
+
+        this.setState({dob : data.dob})
+        this.setState({firstName : data.firstName})
+        this.setState({lastName : data.lastName})
+        this.setState({gp : data.gp})
+        this.setState({appointments : data.appointments})
+        this.setState({requests : data.requests})
+        this.setState({notifications : data.notifications})
     }
     
     render() {
@@ -64,7 +86,7 @@ class PatientDash extends Component {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <span className="navbar-text justify-content-start">Patient Dashboard</span>
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <span className="navbar-text text-success p-2" > Account ID: { this.state.account }</span>
+                            <span className="navbar-text text-success p-2" > Account: { this.state.firstName} { this.state.lastName }</span>
                             <Link to="/logout" className="btn btn-danger">Log Out</Link>
                         </ul>
                     </div>
@@ -74,7 +96,7 @@ class PatientDash extends Component {
                     <div className='d-flex p-3'>
                         <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills" activeKey="link-1">
                             <Nav.Link to="/patientdash" eventKey="link-1">Dashboard</Nav.Link>
-                            <Nav.Link eventKey="link-2">Personal Data</Nav.Link>
+                            <Nav.Link to="/patientdash/personaldata" eventKey="link-2">Personal Data</Nav.Link>
                             <Nav.Link eventKey="link-3">Medical Data</Nav.Link>
                             <Nav.Link href="/patientdash/datalog" eventKey="link-4">Data Access Log</Nav.Link>
                             <Nav.Link href="/patientdash/notfications" eventKey="link-5">Notifications</Nav.Link>
