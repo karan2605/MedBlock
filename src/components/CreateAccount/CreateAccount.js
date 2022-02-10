@@ -114,7 +114,8 @@ class Createaccount extends Component {
                 notification : {
                     datetime: null,
                     category: null,
-                    notification: null
+                    notification: null,
+                    senderId : null
                 }
             },
             prescriptions : {
@@ -139,8 +140,7 @@ class Createaccount extends Component {
             console.error(error)
             return
             }
-            this.state.contract.methods.setHash(result[0].hash).send({from: this.state.account})
-            .then(this.state.contract.methods.addNhsToAddr(this.state.nhsNumber).send({from: this.state.account}))
+            this.state.contract.methods.setHash(result[0].hash, this.state.nhsNumber).send({from: this.state.account})
             .then(window.location.replace("http://localhost:3000/createaccount/success"))
         })
     };
@@ -167,7 +167,8 @@ class Createaccount extends Component {
             notifications : {
                 datetime: null,
                 category: null,
-                notification: null
+                notification: null,
+                senderId : null
             },
             requests: null
         })], this.state.account+".json");
@@ -180,8 +181,7 @@ class Createaccount extends Component {
             console.error(error)
             return
             }
-            this.state.contract.methods.setHash(result[0].hash).send({from: this.state.account})
-            .then(this.state.contract.methods.addNhsToAddr(this.state.nhsNumber).send({from: this.state.account}))
+            this.state.contract.methods.setHash(result[0].hash, this.state.nhsNumber).send({from: this.state.account})
             .then(window.location.replace("http://localhost:3000/createaccount/success"))
         })
     };
