@@ -37,7 +37,8 @@ class WorkerDash extends Component {
             notifications : {
                 datetime: null,
                 category: null,
-                notification: null
+                notification: null,
+                senderId : null
             },
             requests: null
         };
@@ -105,14 +106,14 @@ class WorkerDash extends Component {
     render() {
         return (
             <body>
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                    <a class="navbar-brand" href="#!"><i class="bi bi-box"></i>  MedBlock</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <span class="navbar-text justify-content-center">Medical Worker Dashboard</span>
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <a className="navbar-brand" href="#!"><i className="bi bi-box"></i>  MedBlock</a>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button>
+                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <span className="navbar-text justify-content-center">Medical Worker Dashboard</span>
+                        <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                             <span className="navbar-text text-success p-2"> Account: { this.state.firstName} { this.state.lastName }</span>
-                            <Link to="/logout" class="btn btn-danger">Log Out</Link>
+                            <Link to="/logout" className="btn btn-danger">Log Out</Link>
                         </ul>
                     </div>
                 </nav>
@@ -121,43 +122,43 @@ class WorkerDash extends Component {
                     <div className='d-flex p-3'>
                         <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills" >
                             <Nav.Link active>Dashboard</Nav.Link>
-                            <Nav.Link><Link to= "/workerdash/personaldata">Personal Data</Link></Nav.Link>
-                            <Nav.Link>Patient Data</Nav.Link>
-                            <Nav.Link><Link to= "/workerdash/notifications">Notifications</Link></Nav.Link>
-                            <Nav.Link><Link to= "/workerdash/adddata">Add New Data</Link></Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash/personaldata">Personal Data</Nav.Link>
+                            <Nav.Link as={Link} to="/workerdash">Patient Data</Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash/notifications">Notifications</Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash/adddata">Add New Data</Nav.Link>
                         </Nav>
                     </div>
                     
-                    <div class="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
+                    <div className="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
                         
-                        <Card class="card text-center rounded-3">
+                        <Card className="card text-center rounded-3">
                         <Card.Header as="h5">Notifications <Button variant="success">Details</Button></Card.Header>
                         <Card.Body>
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 1
                                 </Card.Body>
                             </Card>
 
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 2
                                 </Card.Body>
                             </Card>
 
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 3
                                 </Card.Body>
                             </Card>
 
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 4
                                 </Card.Body>
                             </Card>
 
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 5
                                 </Card.Body>
@@ -165,34 +166,34 @@ class WorkerDash extends Component {
                         </Card.Body>
                         </Card>
 
-                        <Card class="card text-center rounded-6">
+                        <Card className="card text-center rounded-6">
                         <Card.Header as="h5">Appointments <Button variant="success">Details</Button></Card.Header>
                         <Card.Body>
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 1
                                 </Card.Body>
                             </Card>
 
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 2
                                 </Card.Body>
                             </Card>
 
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 3
                                 </Card.Body>
                             </Card>
 
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 4
                                 </Card.Body>
                             </Card>
 
-                            <Card class="card text-center rounded-6">
+                            <Card className="card text-center rounded-6">
                                 <Card.Body>
                                     Card 5
                                 </Card.Body>
