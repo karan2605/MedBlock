@@ -4,21 +4,22 @@ pragma solidity >=0.7.0 <0.9.0;
 contract CreateAccount {
     mapping (address => string) public dataHash;
 
-    mapping (uint256 => address) public nhsNumtoAddr;
+    mapping (string => address) public nhsNumtoAddr;
 
-    function setHash(string memory _ipfsHash) public {
+    function setHash(string memory _ipfsHash, string memory nhsNumber) public {
         dataHash[msg.sender] = _ipfsHash;
+        nhsNumtoAddr[nhsNumber] = msg.sender;
     }
 
     function getHash() public view returns (string memory) {
         return dataHash[msg.sender];
     }
 
-    function addNhsToAddr(uint256 nhsNumber) public {
-        nhsNumtoAddr[nhsNumber] = msg.sender;
+    function getHashByAddr(address _address) public view returns (string memory) {
+        return dataHash[_address];
     }
 
-    function returnNhsToAddr(uint256 nhsNumber) public view returns (address) {
+    function returnNhsToAddr(string memory nhsNumber) public view returns (address) {
         return nhsNumtoAddr[nhsNumber];
     } 
 }
