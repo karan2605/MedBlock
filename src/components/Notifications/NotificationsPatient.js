@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { Nav, Table } from 'react-bootstrap';
-import VerifyData from '../../abis/VerifyData.json';
+import { Nav, Table, Button } from 'react-bootstrap';
+import CreateAccount from '../../abis/CreateAccount.json';
 
 const Web3 = require('web3');
 
 class NotificationsPatient extends Component {
+
+    async componentDidMount() {
+        await this.loadBlockchainData()
+    }
 
     constructor(props) {
         super(props);
@@ -20,9 +24,9 @@ class NotificationsPatient extends Component {
         const networkId = await web3.eth.net.getId();
         const accounts = await web3.eth.getAccounts();
         this.setState({account: accounts[0]})
-        const networkData = VerifyData.networks[networkId];
+        const networkData = CreateAccount.networks[networkId];
         if(networkData) {
-            const contract = new web3.eth.Contract(VerifyData.abi, networkData.address);
+            const contract = new web3.eth.Contract(CreateAccount.abi, networkData.address);
             this.setState({contract: contract});
         } 
         else {
@@ -30,8 +34,20 @@ class NotificationsPatient extends Component {
         }
     }
 
-    async fetchNotifications() {
-        // todo
+    async addData() {
+        
+    }
+
+    fetchNotifications() {
+        const notification = JSON.parse(this.props.data.notifications.notification)
+        return (
+            <tr>
+                <td>{notification.datetime}</td>
+                <td>{notification.category}</td>
+                <td>{notification.notification}</td>
+                <td><Button variant="success" onClick={this.addData()}>Validate</Button></td>
+            </tr>
+        )
     }
 
     render() {
@@ -52,10 +68,10 @@ class NotificationsPatient extends Component {
                 <div className='d-flex m-2 rounded-6 align-items-stretch'>
                     <div className='d-flex p-3'>
                         <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills">
-                            <Nav.Link><Link to= "/patientdash">Dashboard</Link></Nav.Link>
-                            <Nav.Link><Link to= "/patientdash/personaldata">Personal Data</Link></Nav.Link>
-                            <Nav.Link><Link to= "/patientdash/medicaldata">Medical Data</Link></Nav.Link>
-                            <Nav.Link><Link to= "/patientdash/datalog">Data Access Log</Link></Nav.Link>
+                            <Nav.Link as={Link} to= "/patientdash">Dashboard</Nav.Link>
+                            <Nav.Link as={Link} to= "/patientdash/personaldata">Personal Data</Nav.Link>
+                            <Nav.Link as={Link} to= "/patientdash/medicaldata">Medical Data</Nav.Link>
+                            <Nav.Link as={Link} to= "/patientdash/datalog">Data Access Log</Nav.Link>
                             <Nav.Link active>Notifications</Nav.Link>
                         </Nav>
                     </div>
@@ -71,7 +87,7 @@ class NotificationsPatient extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            {this.fetchNotifications()}
                         </tbody>
                         </Table>
                     </div>
