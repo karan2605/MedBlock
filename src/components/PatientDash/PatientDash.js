@@ -42,7 +42,8 @@ class PatientDash extends Component {
                 notification : {
                     datetime: null,
                     category: null,
-                    notification: null
+                    notification: null,
+                    senderId : null
                 }
             },
             prescriptions : {
@@ -140,16 +141,16 @@ class PatientDash extends Component {
                     <div className='d-flex p-3'>
                         <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills">
                             <Nav.Link active>Dashboard</Nav.Link>
-                            <Nav.Link><Link to= "/patientdash/personaldata">Personal Data</Link></Nav.Link>
-                            <Nav.Link><Link to= "/patientdash/medicaldata">Medical Data</Link></Nav.Link>
-                            <Nav.Link><Link to= "/patientdash/datalog">Data Access Log</Link></Nav.Link>
-                            <Nav.Link><Link to= "/patientdash/notifications">Notifications</Link></Nav.Link>
+                            <Nav.Link as={Link} to= "/patientdash/personaldata">Personal Data</Nav.Link>
+                            <Nav.Link as={Link} to= "/patientdash/medicaldata">Medical Data</Nav.Link>
+                            <Nav.Link as={Link} to= "/patientdash/datalog">Data Access Log</Nav.Link>
+                            <Nav.Link as={Link} to= "/patientdash/notifications">Notifications</Nav.Link>
                         </Nav>
                     </div>
                     
                     <div className="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
                             <Card className="card text-center rounded-3">
-                            <Card.Header as="h5">Notifications <Button variant="success">Details</Button></Card.Header>
+                            <Card.Header as="h5">Notifications <Link to="/patientdash/notification" className="btn btn-primary">Details</Link></Card.Header>
                             <Card.Body>
                                 <Card className="card text-center rounded-6">
                                     <Card.Body>
@@ -220,7 +221,7 @@ class PatientDash extends Component {
                             
 
                             <Card className="card text-center rounded-6">
-                            <Card.Header as="h5">Data Requests / Accesses <Button variant="success">Details</Button></Card.Header>
+                            <Card.Header as="h5">Data Requests / Accesses <Link to="/patientdash/" className="btn btn-primary">Details</Link></Card.Header>
                             <Card.Body>
                                 <Card className="card text-center rounded-6">
                                     <Card.Body>
