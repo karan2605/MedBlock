@@ -4,7 +4,6 @@ import { Nav, Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import VerifyData from '../../abis/VerifyData.json';
 import CreateAccount from '../../abis/CreateAccount.json';
 
 const ipfsClient = require('ipfs-http-client')
@@ -13,15 +12,35 @@ const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' 
 
 class AddData extends Component {
 
+    async componentDidMount() {
+        await this.loadBlockchainData()
+        await this.loadWeb3()
+    }
+
     constructor(props) {
         super(props)
 
         this.state = { 
             disabled : true,
             values: [],
-            contract : null,
-            accountContract : null
+            accountContract : null,
+            account : null
         };
+    }
+
+    async loadWeb3() {
+        if (window.ethereum) {
+            await window.ethereum.request({ method : 'eth_requestAccounts' });
+            window.web3 = new Web3(window.ethereum);
+            return true;
+        }
+        else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider)
+        }
+        else {
+            window.alert('Non-Ethereum browser detected. You should consider trying MetaMask')
+            return false;
+        }
     }
 
     async loadBlockchainData() {
@@ -29,72 +48,132 @@ class AddData extends Component {
         const networkId = await web3.eth.net.getId();
         const accounts = await web3.eth.getAccounts();
         this.setState({account: accounts[0]})
-        const networkData = VerifyData.networks[networkId];
+        const networkData = CreateAccount.networks[networkId];
         if(networkData) {
-            const contract = new web3.eth.Contract(VerifyData.abi, networkData.address);
             const accountContract = new web3.eth.Contract(CreateAccount.abi, networkData.address);
-            this.setState({contract: contract, accountContract : accountContract});
+            this.setState({accountContract : accountContract});
         } 
         else {
             window.alert('Smart contract not deployed to detected network.');
         }
     }   
 
-    onSubmitAppointment = (event) => {
+    async onSubmitAppointment(event)  {
         event.preventDefault();
-        const validatorID = event.target[6].value;
-        const notes = event.target[7].value;
-        const place = event.target[4].value;
+        const validatorID = event.target[5].value;
+        const notes = event.target[6].value;
+        const place = event.target[3].value;
 
         //add notification to record
         const notification = JSON.stringify({
-            datetime : event.target[1].value + " from : " + event.target[2].value + " to: " + event.target[3].value,
+            datetime : event.target[0].value + " from : " + event.target[1].value + " to: " + event.target[2].value,
             category : "Appointment",
             notification : "Validate Appointment with "+ this.props.data.firstName + " " + 
-                            this.props.data.lastName + " at " + place + " : " + notes
+                            this.props.data.lastName + " at " + place + " : " + notes,
+            senderId : this.props.data.account
         })
 
-        const getValidatorHash = this.state.accountContract.methods.returnNhsToAddr(validatorID).send({from: this.props.data.account})
-        const validatorHash = getValidatorHash;
+        const getValidatorHash = this.state.accountContract.methods.returnNhsToAddr(validatorID).call({from: this.props.data.account})
+        const validatorHash = await getValidatorHash;
+        console.log(validatorHash)
 
-        const getHash = this.state.accountContract.methods.getHash().call({from: this.state.account})
-        const hash = getHash
-        const raw_data = ipfs.cat(hash)
+        const getHash = this.state.accountContract.methods.getHashByAddr(validatorHash).call({from: this.props.data.account})
+        const hash = await getHash
+        const raw_data = await ipfs.cat(hash)
         const data = JSON.parse(raw_data)
         console.log(data)
 
         // add notification to record
-        
-
-
+        const record = new File([JSON.stringify({
+            id: data.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            dob: data.dob,
+            email: data.email,
+            nhsNumber : data.nhsNumber,
+            gp: data.gp,
+            bloodGroup: data.bloodGroup,
+            existingHealth: data.existingHealth,
+            appointments : {
+                appointment : data.appointment
+            },
+            notifications : {
+                notification : notification
+            },
+            prescriptions : {
+                prescription : data.prescription
+            },
+            requests: data.requests
+        })], data.id+".json");
 
         // send back to ipfs
         // update hash stored on blockchain
-        ipfs.add(data, (error, result) => {
+        ipfs.add(record, (error, result) => {
             console.log('Ipfs result', result)
             if(error) {
             console.error(error)
             return
             }
-            this.state.contract.methods.setHash(result[0].hash).send({from: validatorHash})
+            this.state.accountContract.methods.setHash(result[0].hash, validatorID).send({from: validatorHash})
         })
-
     }
 
-    onSubmitPrescription = (event) => {
+    async onSubmitPrescription(event) {
         event.preventDefault();
-        const validator = [event.target[5].value];
+
+        const validatorID = event.target[5].value;
         const place = event.target[4].value
-        this.state.contract.methods.addValidators(validator, place).send({from: this.props.data.account})
 
-        const validatorHash = this.state.accountContract.methods.returnUserId(place, validator).send({from: this.props.data.account})
+        const notification = JSON.stringify({
+            datetime : event.target[0].value,
+            category : "Appointment",
+            notification : "Validate Prescription created by "+ this.props.data.firstName + " " + 
+                            this.props.data.lastName + " to be verified by " + place + " : " ,
+            senderId : this.props.data.account
+        })
+
+        const getValidatorHash = this.state.accountContract.methods.returnNhsToAddr(validatorID).call({from: this.props.data.account})
+        const validatorHash = await getValidatorHash;
+        console.log(validatorHash)
+
+        const getHash = this.state.accountContract.methods.getHashByAddr(validatorHash).call({from: this.props.data.account})
+        const hash = await getHash
+        const raw_data = await ipfs.cat(hash)
+        const data = JSON.parse(raw_data)
+
         //add notification to record
-        const notification = new File([JSON.stringify({
-
-        })])
+        const record = new File([JSON.stringify({
+            id: data.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            dob: data.dob,
+            email: data.email,
+            nhsNumber : data.nhsNumber,
+            gp: data.gp,
+            bloodGroup: data.bloodGroup,
+            existingHealth: data.existingHealth,
+            appointments : {
+                appointment : data.appointment
+            },
+            notifications : {
+                notification : notification
+            },
+            prescriptions : {
+                prescription : data.prescription
+            },
+            requests: data.requests
+        })], data.id+".json");
 
         //send back to ipfs
         //update hash stored on blockchain
+        ipfs.add(record, (error, result) => {
+            console.log('Ipfs result', result)
+            if(error) {
+            console.error(error)
+            return
+            }
+            this.state.accountContract.methods.setHash(result[0].hash, validatorID).send({from: validatorHash})
+        })
     }
 
     createUI() {
@@ -148,10 +227,10 @@ class AddData extends Component {
                 <div className='d-flex m-2 rounded-6 align-items-stretch'>
                     <div className='d-flex p-3'>
                         <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills">
-                            <Nav.Link><Link to= "/workerdash">Dashboard</Link></Nav.Link>
-                            <Nav.Link><Link to= "/workerdash/personaldata">Personal Data</Link></Nav.Link>
-                            <Nav.Link>Patient Data</Nav.Link>
-                            <Nav.Link><Link to= "/workerdash/notifications">Notifications</Link></Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash">Dashboard</Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash/personaldata">Personal Data</Nav.Link>
+                            <Nav.Link as={Link} to="/workerdash"> Patient Data</Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash/notifications">Notifications</Nav.Link>
                             <Nav.Link active>Add New Data</Nav.Link>
                         </Nav>
                     </div>
@@ -203,7 +282,7 @@ class AddData extends Component {
                                     </Tab>
                                     <Tab eventKey="profile" title="Appointment">
                                     <h2 className="display-10 fw-bold">Add Appointment</h2>
-                                        <Form onSubmit={this.onSubmitAppointment}>
+                                        <Form onSubmit={this.onSubmitAppointment.bind(this)}>
                                             <Form.Group controlId="Date">
                                                 <Form.Label>Date:</Form.Label>
                                                 <Form.Control type="date" name="dob" placeholder="date"/>
@@ -231,10 +310,11 @@ class AddData extends Component {
                                             <Form.Group className="mb-3" controlId="formBasicLastName">
                                                 <Form.Control as="textarea" rows={3} placeholder="Notes" name="notes"/>
                                             </Form.Group>
+
+                                            <Button variant="success" type="submit">
+                                                Submit for Verification
+                                            </Button>
                                         </Form>
-                                        <Button variant="success" type="submit">
-                                            Submit for Verification
-                                        </Button>
                                     </Tab>
                                 </Tabs>
                             </div>
