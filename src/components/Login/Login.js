@@ -34,9 +34,11 @@ const Login = () => {
                 <div className="p-4 p-lg-5 bg-light rounded-3 text-center">
                     <div className="m-4 m-lg-5">
                         <h1 className="display-5 fw-bold">Login</h1>
-                        <br></br>
-                        <Button className="connectMetaMask" variant='danger' onClick={handlePatientLogin}>Login as a Patient</Button>
-                        <Button className="connectMetaMask" variant='danger' onClick={handleWorkerLogin}>Login as a Medical Worker</Button>
+                        <h3>Click below to login to your MedBlock account</h3>
+                        <p>&nbsp;</p>
+                        <Button className="connectMetaMask" variant='primary' size="lg" onClick={handlePatientLogin}>Login as a Patient</Button>
+                        <p>&nbsp;</p>
+                        <Button className="connectMetaMask" variant='primary' size="lg" onClick={handleWorkerLogin}>Login as a Medical Worker</Button>
                     </div>
                 </div>
             </div>
