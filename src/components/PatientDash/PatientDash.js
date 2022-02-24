@@ -102,7 +102,7 @@ class PatientDash extends Component {
             gp : data.gp, 
             appointments : data.appointments, 
             requests : data.requests, 
-            notifications : data.notifications, 
+            notifications : [data.notifications], 
             email : data.email, 
             nhsNumber : data.nhsNumber,
             bloodGroup : data.bloodGroup, 
@@ -115,11 +115,12 @@ class PatientDash extends Component {
         this.props.data.firstName = data.firstName
         this.props.data.lastName = data.lastName
         this.props.data.gp = data.gp
-        this.props.data.appointments = data.appointments
+        this.props.data.appointments = [data.appointments]
         this.props.data.requests = data.requests
-        this.props.data.notifications = data.notifications
+        this.props.data.notifications = [data.notifications]
         this.props.data.bloodGroup = data.bloodGroup
         this.props.data.existingHealth = data.existingHealth
+        this.props.data.prescriptions = [data.prescriptions]
     }
 
     render() {
@@ -154,38 +155,14 @@ class PatientDash extends Component {
                             <Card.Body>
                                 <Card className="card text-center rounded-6">
                                     <Card.Body>
-                                        Card 1
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 2
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 3
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 4
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 5
+                                        {this.state.notifications.notifcation}
                                     </Card.Body>
                                 </Card>
                             </Card.Body>
                             </Card>
 
                             <Card className="card text-center rounded-6">
-                            <Card.Header as="h5">Appointments <Button variant="success">Details</Button></Card.Header>
+                            <Card.Header as="h5">Appointments <Button variant="primary">Details</Button></Card.Header>
                             <Card.Body>
                                 <Card className="card text-center rounded-6">
                                     <Card.Body>
