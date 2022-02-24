@@ -11,6 +11,10 @@ contract CreateAccount {
         nhsNumtoAddr[nhsNumber] = msg.sender;
     }
 
+    function setHashbyAddr(string memory _ipfsHash, address _addr) public {
+        dataHash[_addr] = _ipfsHash;
+    }
+
     function getHash() public view returns (string memory) {
         return dataHash[msg.sender];
     }
