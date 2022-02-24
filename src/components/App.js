@@ -14,6 +14,7 @@ import PersonalDataPatient from './PersonalData/PersonalDataPatient';
 import PersonalDataWorker from './PersonalData/PersonalDataWorker';
 import MedicalData from './AccessMedical/MedicalData';
 import AddData from './AddData/AddData';
+import AccessPersonal from './AccessPersonal/AccessPersonal';
 
 
 class App extends Component {
@@ -54,6 +55,7 @@ class App extends Component {
                   <Route path="/workerdash/notifications" element={<NotificationsWorker data={this.state}/>}></Route>
                   <Route path="/workerdash/adddata" element={<AddData data={this.state}/>}></Route>
                   <Route path="/workerdash/personaldata" element={<PersonalDataWorker data={this.state}/>}></Route>
+                  <Route path="/workerdash/patientdata" element={<AccessPersonal data={this.state}/>}></Route>
               </Routes>
             </div>
           </div>
