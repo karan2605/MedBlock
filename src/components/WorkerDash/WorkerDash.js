@@ -123,7 +123,7 @@ class WorkerDash extends Component {
                         <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills" >
                             <Nav.Link active>Dashboard</Nav.Link>
                             <Nav.Link as={Link} to= "/workerdash/personaldata">Personal Data</Nav.Link>
-                            <Nav.Link as={Link} to="/workerdash">Patient Data</Nav.Link>
+                            <Nav.Link as={Link} to="/workerdash/patientdata">Patient Data</Nav.Link>
                             <Nav.Link as={Link} to= "/workerdash/notifications">Notifications</Nav.Link>
                             <Nav.Link as={Link} to= "/workerdash/adddata">Add New Data</Nav.Link>
                         </Nav>
