@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { Nav, Table, Button } from 'react-bootstrap';
 import CreateAccount from '../../abis/CreateAccount.json';
 
+const ipfsClient = require('ipfs-http-client')
 const Web3 = require('web3');
+const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class NotificationsPatient extends Component {
 
@@ -34,19 +36,128 @@ class NotificationsPatient extends Component {
         }
     }
 
-    async addData() {
-        
+    async addData(notification) {
+
+        const getHash = this.state.accountContract.methods.getHash().call({from: this.props.data.account})
+        const hash = await getHash
+        const raw_data = await ipfs.cat(hash)
+        const data = JSON.parse(raw_data)
+
+        if(notification.category === "Appointment") {
+
+            const appointment = [JSON.stringify({
+                date : notification.datetime.slice(0,10),
+                time : notification.datetime.slice(19,23),
+                place : notification.place,
+                doctor : notification.doctor,
+                notes : notification.notes
+            })]
+
+            const record = new File([JSON.stringify({
+                id: data.id,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                dob: data.dob,
+                email: data.email,
+                nhsNumber : data.nhsNumber,
+                gp: data.gp,
+                bloodGroup: data.bloodGroup,
+                existingHealth: data.existingHealth,
+                appointments : {
+                    appointment : appointment.concat(data.appointment)
+                },
+                notifications : {
+                    notification : data.notification
+                },
+                prescriptions : {
+                    prescription : data.prescription
+                },
+                requests: data.requests
+            })], data.id+".json");
+
+            ipfs.add(record, (error, result) => {
+                console.log('Ipfs result', result)
+                if(error) {
+                console.error(error)
+                return
+                }
+                this.state.accountContract.methods.setHash(result[0].hash, data.nhsNumber).send({from: this.props.data.account})
+            })  
+        }
+
+        else if(notification.category === "Prescription") {
+
+            const prescription = [JSON.stringify({
+                date : notification.date,
+                medicine : notification.medicine,
+                pharmacy : notification.pharmacy,
+                issuedBy : notification.issuedBy
+            })]
+
+            const record = new File([JSON.stringify({
+                id: data.id,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                dob: data.dob,
+                email: data.email,
+                nhsNumber : data.nhsNumber,
+                gp: data.gp,
+                bloodGroup: data.bloodGroup,
+                existingHealth: data.existingHealth,
+                appointments : {
+                    appointment : data.appointment
+                },
+                notifications : {
+                    notification : data.notification
+                },
+                prescriptions : {
+                    prescription : prescription.concat(data.prescription)
+                },
+                requests: data.requests
+            })], data.id+".json");
+
+            ipfs.add(record, (error, result) => {
+                console.log('Ipfs result', result)
+                if(error) {
+                console.error(error)
+                return
+                }
+                this.state.accountContract.methods.setHash(result[0].hash, data.nhsNumber).send({from: this.props.data.account})
+            })  
+        }  
     }
 
     fetchNotifications() {
-        const notification = JSON.parse(this.props.data.notifications.notification)
+        const notification_elements = [];
+        const notifications = this.props.data.notifications
+        console.log(notifications)
+        
+        for (let i = 0; i < notifications.length; i++) {
+            const notification = JSON.parse(notifications[i])
+            if(notification.category === "Appointment") {
+                notification_elements.push(
+                <tr>
+                    <td>{notification.datetime}</td>
+                    <td>{notification.category}</td>
+                    <td>Validate Appointment with {notification.doctor} at {notification.place}. Notes: {notification.notes}</td>
+                    <td><Button variant="success" onClick={this.addData(notification)}>Validate</Button></td>
+                </tr>)
+            }
+            else {
+                notification_elements.push(
+                <tr>
+                    <td>{notification.date}</td>
+                    <td>{notification.category}</td>
+                    <td>Validate Prescription with {notification.issuedBy} at {notification.pharmacy}. Notes: {notification.medicine}</td>
+                    <td><Button variant="success" onClick={this.addData(notification)}>Validate</Button></td>
+                </tr>)
+            }
+        }
+
         return (
-            <tr>
-                <td>{notification.datetime}</td>
-                <td>{notification.category}</td>
-                <td>{notification.notification}</td>
-                <td><Button variant="success" onClick={this.addData()}>Validate</Button></td>
-            </tr>
+            <tbody>
+            {notification_elements}
+            </tbody>
         )
     }
 
@@ -86,9 +197,9 @@ class NotificationsPatient extends Component {
                             <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {this.fetchNotifications()}
-                        </tbody>
+                        
+                        {this.fetchNotifications()}
+                        
                         </Table>
                     </div>
                 </div>
