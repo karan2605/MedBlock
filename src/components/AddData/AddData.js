@@ -22,7 +22,7 @@ class AddData extends Component {
 
         this.state = { 
             disabled : true,
-            values: [],
+            values: [{medicine: '', dosageNotes: ''}],
             accountContract : null,
             account : null
         };
@@ -63,15 +63,17 @@ class AddData extends Component {
         const validatorID = event.target[5].value;
         const notes = event.target[6].value;
         const place = event.target[3].value;
+        console.log(this.state.values)
 
         //add notification to record
-        const notification = JSON.stringify({
+        const notification = [JSON.stringify({
             datetime : event.target[0].value + " from : " + event.target[1].value + " to: " + event.target[2].value,
             category : "Appointment",
-            notification : "Validate Appointment with "+ this.props.data.firstName + " " + 
-                            this.props.data.lastName + " at " + place + " : " + notes,
+            place : place,
+            doctor : this.props.data.firstName + " " + this.props.data.lastName,
+            notes : notes,
             senderId : this.props.data.account
-        })
+        })]
 
         const getValidatorHash = this.state.accountContract.methods.returnNhsToAddr(validatorID).call({from: this.props.data.account})
         const validatorHash = await getValidatorHash;
@@ -81,7 +83,6 @@ class AddData extends Component {
         const hash = await getHash
         const raw_data = await ipfs.cat(hash)
         const data = JSON.parse(raw_data)
-        console.log(data)
 
         // add notification to record
         const record = new File([JSON.stringify({
@@ -98,7 +99,7 @@ class AddData extends Component {
                 appointment : data.appointment
             },
             notifications : {
-                notification : notification
+                notification : notification.concat(data.notifications)
             },
             prescriptions : {
                 prescription : data.prescription
@@ -114,7 +115,7 @@ class AddData extends Component {
             console.error(error)
             return
             }
-            this.state.accountContract.methods.setHash(result[0].hash, validatorID).send({from: validatorHash})
+            this.state.accountContract.methods.setHashbyAddr(result[0].hash, validatorHash).send({from: this.props.data.account})
         })
     }
 
@@ -122,15 +123,16 @@ class AddData extends Component {
         event.preventDefault();
 
         const validatorID = event.target[5].value;
-        const place = event.target[4].value
+        const place = event.target[4].value;
 
-        const notification = JSON.stringify({
-            datetime : event.target[0].value,
-            category : "Appointment",
-            notification : "Validate Prescription created by "+ this.props.data.firstName + " " + 
-                            this.props.data.lastName + " to be verified by " + place + " : " ,
+        const notification = [JSON.stringify({
+            date : event.target[0].value,
+            category : "Prescription",
+            medicine : this.state.values,
+            pharmacy : place,
+            issuedBy : this.props.data.firstName + " " + this.props.data.lastName,
             senderId : this.props.data.account
-        })
+        })]
 
         const getValidatorHash = this.state.accountContract.methods.returnNhsToAddr(validatorID).call({from: this.props.data.account})
         const validatorHash = await getValidatorHash;
@@ -156,7 +158,7 @@ class AddData extends Component {
                 appointment : data.appointment
             },
             notifications : {
-                notification : notification
+                notification : notification.concat(data.notifications)
             },
             prescriptions : {
                 prescription : data.prescription
@@ -172,19 +174,19 @@ class AddData extends Component {
             console.error(error)
             return
             }
-            this.state.accountContract.methods.setHash(result[0].hash, validatorID).send({from: validatorHash})
+            this.state.accountContract.methods.setHashbyAddr(result[0].hash, validatorHash).send({from: this.props.data.account})
         })
     }
 
     createUI() {
         return this.state.values.map((el, i) => 
             <div key={i}>
-                <Form.Group className="mb-3" controlId="formBasicLastName">
-                    <Form.Control type="text" placeholder="Medicine Name" name="medicineName" value={el||''} onChange={this.handleChange.bind(this, i)}/>
+                <Form.Group className="mb-3" controlId="formMedicineName">
+                    <Form.Control type="text" placeholder="Medicine Name" value={el.medicine} onChange={this.handleChange.bind(this, i)}/>
                 </Form.Group>
                 <span>  </span>
-                <Form.Group className="mb-3" controlId="formBasicLastName">
-                    <Form.Control as="textarea" rows={3} placeholder="Dosage Notes" name="notes" value={el||''} onChange={this.handleChange.bind(this, i)}/>
+                <Form.Group className="mb-3" controlId="formDosageNotes">
+                    <Form.Control as="textarea" type="text" rows={3} placeholder="Dosage Notes" value={el.dosageNotes} onChange={this.handleChange.bind(this, i)}/>
                 </Form.Group>
                 <span>  </span>
                 <Button type='button' value='remove' onClick={this.removeClick.bind(this, i)} variant="danger">Remove Medicine</Button>
@@ -193,16 +195,16 @@ class AddData extends Component {
         )
     }
 
-    handleChange(i, event) {
+    handleChange (i,event) {
         let values = [...this.state.values];
-        values[i] = event.target.value;
-        this.setState({ values });
+        values[i][event.target.id] = event.target.value;
+        this.setState({ values }); 
     }
-    
+     
     addClick(){
-        this.setState(prevState => ({ values: [...prevState.values, '']}))
+       this.setState(prevState => ({ values: [...prevState.values, {medicine: '', dosageNotes: '',}]}))
     }
-
+     
     removeClick(i){
         let values = [...this.state.values];
         values.splice(i,1);
@@ -229,7 +231,7 @@ class AddData extends Component {
                         <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills">
                             <Nav.Link as={Link} to= "/workerdash">Dashboard</Nav.Link>
                             <Nav.Link as={Link} to= "/workerdash/personaldata">Personal Data</Nav.Link>
-                            <Nav.Link as={Link} to="/workerdash"> Patient Data</Nav.Link>
+                            <Nav.Link as={Link} to="/workerdash/patientdata"> Patient Data</Nav.Link>
                             <Nav.Link as={Link} to= "/workerdash/notifications">Notifications</Nav.Link>
                             <Nav.Link active>Add New Data</Nav.Link>
                         </Nav>
