@@ -46,11 +46,11 @@ class MedicalData extends Component {
             <div className='d-flex m-2 rounded-6 align-items-stretch'>
                 <div className='d-flex p-3'>
                     <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills">
-                        <Nav.Link><Link to= "/patientdash">Dashboard</Link></Nav.Link>
-                        <Nav.Link><Link to= "/patientdash/personaldata">Personal Data</Link></Nav.Link>
+                        <Nav.Link as={Link} to= "/patientdash">Dashboard</Nav.Link>
+                        <Nav.Link as={Link} to= "/patientdash/personaldata">Personal Data</Nav.Link>
                         <Nav.Link active>Medical Data</Nav.Link>
-                        <Nav.Link><Link to= "/patientdash/datalog">Data Access Log</Link></Nav.Link>
-                        <Nav.Link><Link to= "/patientdash/notifications">Notifications</Link></Nav.Link>
+                        <Nav.Link as={Link} to= "/patientdash/datalog">Data Access Log</Nav.Link>
+                        <Nav.Link as={Link} to= "/patientdash/notifications">Notifications</Nav.Link>
                     </Nav>
                 </div>
                 
@@ -60,6 +60,10 @@ class MedicalData extends Component {
                         <div className="p-4 p-lg-5 bg-light rounded-3 flex-fill">
                             <h1 className="display-5 fw-bold">Medical Data</h1>
                                 <Form>
+                                    <Form.Group className="mb-3" controlId="formBasicBlood">
+                                        <Form.Label>NHS Number:</Form.Label>
+                                        <Form.Control type="text" value={this.props.data.nhsNumber} name="nhsNumber" disabled/>
+                                    </Form.Group>
                                     <fieldset disabled={(this.state.disabled) ? "disabled" : ""}>
                                         <Form.Group className="mb-3" controlId="formBasicGpName">
                                             <Form.Label>GP:</Form.Label>
@@ -70,6 +74,7 @@ class MedicalData extends Component {
                                             <Form.Label>Blood Group:</Form.Label>
                                             <Form.Control type="text" value={this.props.data.bloodGroup} name="bloodgroup"/>
                                         </Form.Group>
+                                        
                                         
                                         <Form.Group className="mb-3" controlId="formMedicalCond">
                                             <Form.Label>Existing Health Conditions</Form.Label>
