@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { Nav, Table, Button } from 'react-bootstrap';
+import { Nav, Table, Button, Modal } from 'react-bootstrap';
 import CreateAccount from '../../abis/CreateAccount.json';
 
 const ipfsClient = require('ipfs-http-client')
@@ -11,15 +11,37 @@ class NotificationsPatient extends Component {
 
     async componentDidMount() {
         await this.loadBlockchainData()
+        await this.loadWeb3()
     }
 
     constructor(props) {
         super(props);
 
         this.state = {
-            contract : null
+            account : null,
+            contract : null,
+            show : false
         }
     }
+
+    async loadWeb3() {
+        if (window.ethereum) {
+            await window.ethereum.request({ method : 'eth_requestAccounts' });
+            window.web3 = new Web3(window.ethereum);
+            return true;
+        }
+        else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider)
+        }
+        else {
+            window.alert('Non-Ethereum browser detected. You should consider trying MetaMask')
+            return false;
+        }
+    }
+
+    handleClose = () => {
+        this.setState({ show : false })
+    };
 
     async loadBlockchainData() {
         const web3 = new Web3(window.ethereum);
@@ -36,12 +58,24 @@ class NotificationsPatient extends Component {
         }
     }
 
-    async addData(notification) {
+    async showModal() {
 
-        const getHash = this.state.accountContract.methods.getHash().call({from: this.props.data.account})
-        const hash = await getHash
-        const raw_data = await ipfs.cat(hash)
-        const data = JSON.parse(raw_data)
+        return (
+            <Modal show={this.state.show} onHide={this.handleClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Transaction Verified</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Your transaction has been verified by the network</Modal.Body>
+                <Modal.Footer>
+                <Button variant="danger" onClick={this.handleClose}>
+                    Close
+                </Button>
+                </Modal.Footer>
+            </Modal>
+        )
+    }
+
+    async addData(notification) {
 
         if(notification.category === "Appointment") {
 
@@ -54,26 +88,26 @@ class NotificationsPatient extends Component {
             })]
 
             const record = new File([JSON.stringify({
-                id: data.id,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                dob: data.dob,
-                email: data.email,
-                nhsNumber : data.nhsNumber,
-                gp: data.gp,
-                bloodGroup: data.bloodGroup,
-                existingHealth: data.existingHealth,
+                id: this.props.data.account,
+                firstName: this.props.data.firstName,
+                lastName: this.props.data.lastName,
+                dob: this.props.data.dob,
+                email: this.props.data.email,
+                nhsNumber : this.props.data.nhsNumber,
+                gp: this.props.data.gp,
+                bloodGroup: this.props.data.bloodGroup,
+                existingHealth: this.props.data.existingHealth,
                 appointments : {
-                    appointment : appointment.concat(data.appointment)
+                    appointment : appointment.concat(this.props.data.appointment)
                 },
                 notifications : {
-                    notification : data.notification
+                    notification : this.props.data.notifications
                 },
                 prescriptions : {
-                    prescription : data.prescription
+                    prescription : this.props.data.prescription
                 },
-                requests: data.requests
-            })], data.id+".json");
+                requests: this.props.data.requests
+            })], this.props.data.account+".json");
 
             ipfs.add(record, (error, result) => {
                 console.log('Ipfs result', result)
@@ -81,7 +115,9 @@ class NotificationsPatient extends Component {
                 console.error(error)
                 return
                 }
-                this.state.accountContract.methods.setHash(result[0].hash, data.nhsNumber).send({from: this.props.data.account})
+                this.state.contract.methods.setHash(result[0].hash, this.props.data.nhsNumber).send({from: this.props.data.account})
+                .then(this.setState({show : true}))
+                .then(this.showModal)
             })  
         }
 
@@ -95,26 +131,26 @@ class NotificationsPatient extends Component {
             })]
 
             const record = new File([JSON.stringify({
-                id: data.id,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                dob: data.dob,
-                email: data.email,
-                nhsNumber : data.nhsNumber,
-                gp: data.gp,
-                bloodGroup: data.bloodGroup,
-                existingHealth: data.existingHealth,
+                id: this.props.data.account,
+                firstName: this.props.data.firstName,
+                lastName: this.props.data.lastName,
+                dob: this.props.data.dob,
+                email: this.props.data.email,
+                nhsNumber : this.props.data.nhsNumber,
+                gp: this.props.data.gp,
+                bloodGroup: this.props.data.bloodGroup,
+                existingHealth: this.props.data.existingHealth,
                 appointments : {
-                    appointment : data.appointment
+                    appointment : this.props.data.appointment
                 },
                 notifications : {
-                    notification : data.notification
+                    notification : this.props.data.notification
                 },
                 prescriptions : {
-                    prescription : prescription.concat(data.prescription)
+                    prescription : prescription.concat(this.props.data.prescription)
                 },
-                requests: data.requests
-            })], data.id+".json");
+                requests: this.props.data.requests
+            })], this.props.data.account+".json");
 
             ipfs.add(record, (error, result) => {
                 console.log('Ipfs result', result)
@@ -122,17 +158,18 @@ class NotificationsPatient extends Component {
                 console.error(error)
                 return
                 }
-                this.state.accountContract.methods.setHash(result[0].hash, data.nhsNumber).send({from: this.props.data.account})
+                this.state.contract.methods.setHash(result[0].hash, this.props.data.nhsNumber).send({from: this.props.data.account})
+                .then(this.setState({show : true}))
+                .then(this.showModal)
             })  
         }  
     }
 
     fetchNotifications() {
         const notification_elements = [];
-        const notifications = this.props.data.notifications
-        console.log(notifications)
+        const notifications = this.props.data.notifications.notification
         
-        for (let i = 0; i < notifications.length; i++) {
+        for (let i = 0; i < notifications.length-1; i++) {
             const notification = JSON.parse(notifications[i])
             if(notification.category === "Appointment") {
                 notification_elements.push(
@@ -140,7 +177,8 @@ class NotificationsPatient extends Component {
                     <td>{notification.datetime}</td>
                     <td>{notification.category}</td>
                     <td>Validate Appointment with {notification.doctor} at {notification.place}. Notes: {notification.notes}</td>
-                    <td><Button variant="success" onClick={this.addData(notification)}>Validate</Button></td>
+                    <td><Button variant="success" onClick={() => { this.addData(notification) }}>Validate</Button>
+                    <Button variant="danger" >Query</Button></td>
                 </tr>)
             }
             else {
@@ -149,7 +187,8 @@ class NotificationsPatient extends Component {
                     <td>{notification.date}</td>
                     <td>{notification.category}</td>
                     <td>Validate Prescription with {notification.issuedBy} at {notification.pharmacy}. Notes: {notification.medicine}</td>
-                    <td><Button variant="success" onClick={this.addData(notification)}>Validate</Button></td>
+                    <td><Button variant="success" onClick={() => { this.addData(notification) }}>Validate</Button>
+                    <Button variant="danger" >Query</Button></td>
                 </tr>)
             }
         }
@@ -164,14 +203,14 @@ class NotificationsPatient extends Component {
     render() {
         return (
             <body>
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                    <a class="navbar-brand" href="#!"><i class="bi bi-box"></i>  MedBlock</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <span class="navbar-text justify-content-center">Notifications</span>
-                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <a className="navbar-brand" href="#!"><i className="bi bi-box"></i>  MedBlock</a>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span></button>
+                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <span className="navbar-text justify-content-center">Notifications</span>
+                        <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                             <span className="navbar-text text-success p-2"> Account: { this.props.data.firstName} { this.props.data.lastName }</span>
-                            <Link to="/logout" class="btn btn-danger">Log Out</Link>
+                            <Link to="/logout" className="btn btn-danger">Log Out</Link>
                         </ul>
                     </div>
                 </nav>
@@ -187,7 +226,7 @@ class NotificationsPatient extends Component {
                         </Nav>
                     </div>
                     
-                    <div class="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
+                    <div className="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
                     <Table Responsive bordered>
                         <thead>
                             <tr>
