@@ -245,7 +245,7 @@ class AddData extends Component {
                                 <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3">
                                     <Tab eventKey="home" title="Prescription">
                                         <h2 className="display-10 fw-bold">Add Prescription</h2>
-                                        <Form onSubmit={this.onSubmitPrescription}>
+                                        <Form onSubmit={this.onSubmitPrescription.bind(this)}>
                                             <Form.Group controlId="Date">
                                                 <Form.Label>Date:</Form.Label>
                                                 <Form.Control type="date" name="dob" placeholder="date"/>
