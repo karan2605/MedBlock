@@ -96,13 +96,15 @@ class PatientDash extends Component {
         const raw_data = await ipfs.cat(hash)
         const data = JSON.parse(raw_data)
 
+        console.log(data)
+
         this.setState({dob : data.dob, 
             firstName : data.firstName, 
             lastName : data.lastName, 
             gp : data.gp, 
             appointments : data.appointments, 
             requests : data.requests, 
-            notifications : [data.notifications], 
+            notifications : data.notifications, 
             email : data.email, 
             nhsNumber : data.nhsNumber,
             bloodGroup : data.bloodGroup, 
@@ -115,12 +117,84 @@ class PatientDash extends Component {
         this.props.data.firstName = data.firstName
         this.props.data.lastName = data.lastName
         this.props.data.gp = data.gp
-        this.props.data.appointments = [data.appointments]
+        this.props.data.appointments = data.appointments
         this.props.data.requests = data.requests
-        this.props.data.notifications = [data.notifications]
+        this.props.data.notifications = data.notifications
         this.props.data.bloodGroup = data.bloodGroup
         this.props.data.existingHealth = data.existingHealth
-        this.props.data.prescriptions = [data.prescriptions]
+        this.props.data.prescriptions = data.prescriptions
+    }
+
+    fetchNotifications() {
+        const notification_elements = [];
+        const notifications = this.state.notifications.notification
+
+        if(notifications.length > 0) {
+        
+            for (let i = 0; i < notifications.length-1; i++) {
+                const notification = JSON.parse(notifications[i])
+                if(notification.category === "Appointment") {
+                    notification_elements.push(
+                    <Card>
+                        <Card.Body><b>{notification.datetime}</b> <br></br> Validate Appointment with {notification.doctor}</Card.Body>
+                    </Card>)
+                }
+                else {
+                    notification_elements.push(
+                    <Card>
+                        <Card.Body><b>{notification.datetime}</b> <br></br> Validate Prescription issued by {notification.issuedBy}</Card.Body>
+                    </Card>)
+                }
+            }
+        }
+
+        return (
+            <Card.Body>
+            {notification_elements}
+            </Card.Body>
+        )
+    }
+
+    fetchAppointments() {
+        const appointment_elements = [];
+        
+        if(this.state.appointments.appointment != null && this.state.appointments.appointment.length > 0) {
+            const appointments = this.state.appointments.appointment
+            for (let i = 0; i < appointments.length-1; i++) {
+                const appointment = JSON.parse(appointments[i])
+                appointment_elements.push(
+                <Card>
+                    <Card.Body><b>{appointment.date}</b> <br></br> Appointment with {appointment.doctor} <br></br> at {appointment.place}</Card.Body>
+                </Card>)
+            }
+
+            return (
+                <Card.Body>
+                {appointment_elements}
+                </Card.Body>
+            )
+        }
+    }
+
+    fetchAccesses() {
+        const access_elements = [];
+        const accesses = this.state.requests
+
+        if(this.state.requests != null && this.state.requests.length > 0) {
+            for (let i = 0; i < accesses.length-1; i++) {
+                const access = JSON.parse(accesses[i])
+                access_elements.push(
+                <Card>
+                    <Card.Body><b>{access.datetime}</b> <br></br> {access.type} accessed by {access.accessor}</Card.Body>
+                </Card>)
+            }
+
+            return (
+                <Card.Body>
+                {access_elements}
+                </Card.Body>
+            )
+        }
     }
 
     render() {
@@ -151,85 +225,19 @@ class PatientDash extends Component {
                     
                     <div className="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
                             <Card className="card text-center rounded-3">
-                            <Card.Header as="h5">Notifications <Link to="/patientdash/notification" className="btn btn-primary">Details</Link></Card.Header>
-                            <Card.Body>
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        {this.state.notifications.notifcation}
-                                    </Card.Body>
-                                </Card>
-                            </Card.Body>
+                            <Card.Header as="h5">Notifications <Link to="/patientdash/notifications" className="btn btn-primary">Details</Link></Card.Header>
+                                {this.fetchNotifications()}
                             </Card>
 
                             <Card className="card text-center rounded-6">
                             <Card.Header as="h5">Appointments <Button variant="primary">Details</Button></Card.Header>
-                            <Card.Body>
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 1
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 2
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 3
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 4
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 5
-                                    </Card.Body>
-                                </Card>
-                            </Card.Body>
+                                {this.fetchAppointments()}
                             </Card>
                             
 
                             <Card className="card text-center rounded-6">
-                            <Card.Header as="h5">Data Requests / Accesses <Link to="/patientdash/" className="btn btn-primary">Details</Link></Card.Header>
-                            <Card.Body>
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 1
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 2
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 3
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 4
-                                    </Card.Body>
-                                </Card>
-
-                                <Card className="card text-center rounded-6">
-                                    <Card.Body>
-                                        Card 5
-                                    </Card.Body>
-                                </Card>
-                            </Card.Body>
+                            <Card.Header as="h5">Data Requests / Accesses <Link to="/patientdash/datalog" className="btn btn-primary">Details</Link></Card.Header>
+                                {this.fetchAccesses()}
                             </Card>
                     </div>
                 </div>
