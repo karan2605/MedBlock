@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { Nav, Card, Button } from 'react-bootstrap';
+import { Nav, Card } from 'react-bootstrap';
 import CreateAccount from '../../abis/CreateAccount.json';
 
 const Web3 = require('web3');
@@ -79,6 +79,8 @@ class WorkerDash extends Component {
         const raw_data = await ipfs.cat(hash)
         const data = JSON.parse(raw_data)
 
+        console.log(data)
+
         this.setState({dob : data.dob, 
             firstName : data.firstName, 
             lastName : data.lastName, 
@@ -101,6 +103,57 @@ class WorkerDash extends Component {
         this.props.data.notifications = data.notifications
         this.props.data.placeOfWork = data.placeOfWork
         this.props.data.role = data.role
+    }
+
+    fetchNotifications() {
+        const notification_elements = [];
+        const notifications = this.state.notifications
+
+        if(notifications.length > 0) {
+        
+            for (let i = 0; i < notifications.length-1; i++) {
+                const notification = JSON.parse(notifications[i])
+                if(notification.category === "Query") {
+                    notification_elements.push(
+                    <Card>
+                        <Card.Body><b>{notification.datetime}</b> <br></br> Validate Query from {notification.patient}</Card.Body>
+                    </Card>)
+                }
+                else {
+                    notification_elements.push(
+                    <Card>
+                        <Card.Body><b>{notification.datetime}</b> <br></br> Validate Prescription issued by {notification.issuedBy}</Card.Body>
+                    </Card>)
+                }
+            }
+        }
+
+        return (
+            <Card.Body>
+            {notification_elements}
+            </Card.Body>
+        )
+    }
+
+    fetchAppointments() {
+        const appointment_elements = [];
+        
+        if(this.state.appointments != null && this.state.appointments.length > 0) {
+            const appointments = this.state.appointments
+            for (let i = 0; i < appointments.length-1; i++) {
+                const appointment = JSON.parse(appointments[i])
+                appointment_elements.push(
+                <Card>
+                    <Card.Body><b>{appointment.date}</b> <br></br> Appointment with {appointment.doctor} <br></br> at {appointment.place}</Card.Body>
+                </Card>)
+            }
+
+            return (
+                <Card.Body>
+                {appointment_elements}
+                </Card.Body>
+            )
+        }
     }
 
     render() {
@@ -132,72 +185,16 @@ class WorkerDash extends Component {
                     <div className="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
                         
                         <Card className="card text-center rounded-3">
-                        <Card.Header as="h5">Notifications <Button variant="success">Details</Button></Card.Header>
+                        <Card.Header as="h5">Notifications <Link to="/workerdash/notifications" className="btn btn-primary">Details</Link></Card.Header>
                         <Card.Body>
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 1
-                                </Card.Body>
-                            </Card>
-
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 2
-                                </Card.Body>
-                            </Card>
-
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 3
-                                </Card.Body>
-                            </Card>
-
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 4
-                                </Card.Body>
-                            </Card>
-
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 5
-                                </Card.Body>
-                            </Card>
+                            {this.fetchNotifications()}
                         </Card.Body>
                         </Card>
 
                         <Card className="card text-center rounded-6">
-                        <Card.Header as="h5">Appointments <Button variant="success">Details</Button></Card.Header>
+                        <Card.Header as="h5">Appointments</Card.Header>
                         <Card.Body>
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 1
-                                </Card.Body>
-                            </Card>
-
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 2
-                                </Card.Body>
-                            </Card>
-
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 3
-                                </Card.Body>
-                            </Card>
-
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 4
-                                </Card.Body>
-                            </Card>
-
-                            <Card className="card text-center rounded-6">
-                                <Card.Body>
-                                    Card 5
-                                </Card.Body>
-                            </Card>
+                            {this.fetchAppointments()}
                         </Card.Body>
                         </Card>
                     </div>
