@@ -127,7 +127,7 @@ class PatientDash extends Component {
 
     fetchNotifications() {
         const notification_elements = [];
-        const notifications = this.state.notifications.notification
+        const notifications = this.state.notifications
 
         if(notifications.length > 0) {
         
