@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { Nav, Table, Button } from 'react-bootstrap';
+import { Nav, Table } from 'react-bootstrap';
 
 class DataLog extends Component {
 
