@@ -98,12 +98,8 @@ class AddData extends Component {
             appointments : {
                 appointment : data.appointment
             },
-            notifications : {
-                notification : notification.concat(data.notifications)
-            },
-            prescriptions : {
-                prescription : data.prescription
-            },
+            notifications : notification.concat(data.notifications),
+            prescriptions : data.prescription,
             requests: data.requests
         })], data.id+".json");
 
@@ -157,9 +153,7 @@ class AddData extends Component {
             appointments : {
                 appointment : data.appointment
             },
-            notifications : {
-                notification : notification.concat(data.notifications)
-            },
+            notifications : notification.concat(data.notifications),
             prescriptions : {
                 prescription : data.prescription
             },
