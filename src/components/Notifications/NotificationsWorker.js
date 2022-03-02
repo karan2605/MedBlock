@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { Nav, Table } from 'react-bootstrap';
+import { Nav, Table, Button } from 'react-bootstrap';
 import VerifyData from '../../abis/VerifyData.json';
 
 const Web3 = require('web3');
@@ -30,8 +30,37 @@ class NotificationsWorker extends Component {
         }
     }
 
-    async fetchNotifications() {
-        // todo
+    fetchNotifications() {
+        const notification_elements = [];
+        const notifications = this.props.data.notifications
+        
+        for (let i = 0; i < notifications.length-1; i++) {
+            const notification = JSON.parse(notifications[i])
+            if(notification.category === "Appointment") {
+                notification_elements.push(
+                <tr>
+                    <td>{notification.datetime}</td>
+                    <td>{notification.category}</td>
+                    <td>Validate Appointment with {notification.doctor}. Notes: {notification.notes}</td>
+                    <td><Button variant="success" onClick={() => { this.addData(notification) }}>Validate</Button></td>
+                </tr>)
+            }
+            else {
+                notification_elements.push(
+                <tr>
+                    <td>{notification.datetime}</td>
+                    <td>{notification.category}</td>
+                    <td>Validate Query from {notification.patient} for {notification.patient_notification}. Query: {notification.notes}</td>
+                    <td><Button variant="success" onClick={() => { this.addData(notification) }}>Validate</Button></td>
+                </tr>)
+            }
+        }
+
+        return (
+            <tbody>
+                {notification_elements}
+            </tbody>
+        )
     }
 
     render() {
@@ -51,12 +80,12 @@ class NotificationsWorker extends Component {
                 
                 <div className='d-flex m-2 rounded-6 align-items-stretch'>
                     <div className='d-flex p-3'>
-                    <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills" >
-                            <Nav.Link><Link to= "/workerdash">Dashboard</Link></Nav.Link>
-                            <Nav.Link><Link to= "/workerdash/personaldata">Personal Data</Link></Nav.Link>
-                            <Nav.Link>Patient Data</Nav.Link>
+                        <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills">
+                            <Nav.Link as={Link} to= "/workerdash">Dashboard</Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash/personaldata">Personal Data</Nav.Link>
+                            <Nav.Link as={Link} to="/workerdash/patientdata"> Patient Data</Nav.Link>
                             <Nav.Link active>Notifications</Nav.Link>
-                            <Nav.Link><Link to= "/workerdash/adddata">Add New Data</Link></Nav.Link>
+                            <Nav.Link as={Link} to="/workerdash/adddata">Add New Data</Nav.Link>
                         </Nav>
                     </div>
                     
@@ -70,9 +99,9 @@ class NotificationsWorker extends Component {
                             <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            
-                        </tbody>
+
+                        {this.fetchNotifications()}
+                        
                         </Table>
                     </div>
                 </div>
