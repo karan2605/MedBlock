@@ -95,9 +95,7 @@ class AddData extends Component {
             gp: data.gp,
             bloodGroup: data.bloodGroup,
             existingHealth: data.existingHealth,
-            appointments : {
-                appointment : data.appointment
-            },
+            appointments : data.appointment,
             notifications : notification.concat(data.notifications),
             prescriptions : data.prescription,
             requests: data.requests
@@ -118,8 +116,8 @@ class AddData extends Component {
     async onSubmitPrescription(event) {
         event.preventDefault();
 
-        const validatorID = event.target[5].value;
-        const place = event.target[4].value;
+        const validatorID = event.target[2].value;
+        const place = event.target[7].value;
 
         const notification = [JSON.stringify({
             date : event.target[0].value,
@@ -129,6 +127,8 @@ class AddData extends Component {
             issuedBy : this.props.data.firstName + " " + this.props.data.lastName,
             senderId : this.props.data.account
         })]
+
+        console.log(notification)
 
         const getValidatorHash = this.state.accountContract.methods.returnNhsToAddr(validatorID).call({from: this.props.data.account})
         const validatorHash = await getValidatorHash;
@@ -175,12 +175,12 @@ class AddData extends Component {
     createUI() {
         return this.state.values.map((el, i) => 
             <div key={i}>
-                <Form.Group className="mb-3" controlId="formMedicineName">
-                    <Form.Control type="text" placeholder="Medicine Name" value={el.medicine} onChange={this.handleChange.bind(this, i)}/>
+                <Form.Group className="mb-3" controlId="medicine">
+                    <Form.Control type="text" placeholder="Medicine Name" defaultValue={el.medicine} onChange={this.handleChange.bind(this, i)}/>
                 </Form.Group>
                 <span>  </span>
-                <Form.Group className="mb-3" controlId="formDosageNotes">
-                    <Form.Control as="textarea" type="text" rows={3} placeholder="Dosage Notes" value={el.dosageNotes} onChange={this.handleChange.bind(this, i)}/>
+                <Form.Group className="mb-3" controlId="dosageNotes">
+                    <Form.Control as="textarea" type="text" rows={3} placeholder="Dosage Notes" defaultValue={el.dosageNotes} onChange={this.handleChange.bind(this, i)}/>
                 </Form.Group>
                 <span>  </span>
                 <Button type='button' value='remove' onClick={this.removeClick.bind(this, i)} variant="danger">Remove Medicine</Button>
@@ -262,10 +262,6 @@ class AddData extends Component {
 
                                             <Form.Group className="mb-3" controlId="formBasicLastName">
                                                 <Form.Control type="text" placeholder="Pharmacy" name="pharmacy"/>
-                                            </Form.Group>
-
-                                            <Form.Group className="mb-3" controlId="formBasicLastName">
-                                                <Form.Control type="text" placeholder="Issued By" name="issuedBy"/>
                                             </Form.Group>
 
                                             <br></br>
