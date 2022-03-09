@@ -2,22 +2,126 @@ import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 import { Nav, Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
+import CreateAccount from '../../abis/CreateAccount.json';
+
+const ipfsClient = require('ipfs-http-client')
+const Web3 = require('web3');
+const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class PersonalDataPatient extends Component {
+
+    async componentDidMount() {
+        await this.loadBlockchainData()
+        await this.loadWeb3()
+    }
 
     constructor(props) {
         super(props)
 
         this.state = { 
-            disabled : true
+            disabled : true,
+            accountContract : null
         };
     }
 
-    submitRequest(event) {
+    async loadWeb3() {
+        if (window.ethereum) {
+            await window.ethereum.request({ method : 'eth_requestAccounts' });
+            window.web3 = new Web3(window.ethereum);
+            return true;
+        }
+        else if (window.web3) {
+            window.web3 = new Web3(window.web3.currentProvider)
+        }
+        else {
+            window.alert('Non-Ethereum browser detected. You should consider trying MetaMask')
+            return false;
+        }
+    }
+
+    async loadBlockchainData() {
+        const web3 = new Web3(window.ethereum);
+        const networkId = await web3.eth.net.getId();
+        const accounts = await web3.eth.getAccounts();
+        this.setState({account: accounts[0]})
+        const networkData = CreateAccount.networks[networkId];
+        if(networkData) {
+            const accountContract = new web3.eth.Contract(CreateAccount.abi, networkData.address);
+            this.setState({accountContract : accountContract});
+        } 
+        else {
+            window.alert('Smart contract not deployed to detected network.');
+        }
+    }   
+
+    async submitRequest(event) {
         // find the data that was changed on the form by comparing it to props variables
         // Create a notification to the receptionist of the gp
         // Add notification to the record
         // Display modal showing pending transaction
+
+        event.preventDefault();
+        const changed = []
+
+        const fname = event.target[2].value
+        const lname = event.target[3].value
+        const dob = event.target[4].value
+        const email = event.target[5].value
+
+        if(fname !== this.props.data.firstName) {
+            changed.push(this.props.data.firstName + "-" + fname)
+        }
+        else if(lname !== this.props.data.lastName) {
+            changed.push(this.props.data.lastName + "-" + lname)
+        }
+        else if(dob !== this.props.data.dob) {
+            changed.push(this.props.data.dob + "-" + dob)
+        }
+        else if(email !== this.props.data.email) {
+            changed.push(this.props.data.email + "-" + email)
+        }
+
+        const notification = JSON.stringify({
+            changedData : changed,
+            senderId : this.props.data.id,
+        })
+
+        const getValidatorHash = this.state.accountContract.methods.findHashFromArea(this.props.data.gp).call({from: this.props.data.account})
+        const validatorHash = await getValidatorHash;
+        console.log(validatorHash)
+
+        const getHash = this.state.accountContract.methods.getHashByAddr(validatorHash).call({from: this.props.data.account})
+        const hash = await getHash
+        const raw_data = await ipfs.cat(hash)
+        const data = JSON.parse(raw_data)
+
+        // add notification to record
+        const record = new File([JSON.stringify({
+            id: data.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            dob: data.dob,
+            email: data.email,
+            nhsNumber : data.nhsNumber,
+            gp: data.gp,
+            bloodGroup: data.bloodGroup,
+            existingHealth: data.existingHealth,
+            appointments : data.appointment,
+            notifications : notification.concat(data.notifications),
+            prescriptions : data.prescription,
+            requests: data.requests
+        })], data.id+".json");
+
+        // send back to ipfs
+        // update hash stored on blockchain
+        ipfs.add(record, (error, result) => {
+            console.log('Ipfs result', result)
+            if(error) {
+            console.error(error)
+            return
+            }
+            this.state.accountContract.methods.setHashbyAddr(result[0].hash, validatorHash).send({from: this.props.data.account})
+        })
     }
 
     enableForm() {
@@ -55,38 +159,36 @@ class PersonalDataPatient extends Component {
                         <div className="d-flex justify-content-center align-items-center">
                             <div className="p-4 p-lg-5 bg-light rounded-3 flex-fill">
                                 <h1 className="display-5 fw-bold justify-content-center">Personal Data</h1>
-                                    <Form>
-                                        <Form.Group className="mb-3" controlId="formUniqueId">
-                                            <Form.Label>Unique Identifier:</Form.Label>
-                                            <Form.Control type="text" value={this.props.data.account} name="Id" disabled/>
-                                        </Form.Group>
+                                    <Form onSubmit={this.submitRequest.bind(this)}>
                                         <fieldset disabled={(this.state.disabled) ? "disabled" : ""}>
                                             <Form.Group className="mb-3" controlId="formBasicFirstName">
                                                 <Form.Label>First Name:</Form.Label>
-                                                <Form.Control type="text" value={this.props.data.firstName} name="fname" />
+                                                <Form.Control type="text" defaultValue={this.props.data.firstName} name="fname"/>
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicLastName">
                                                 <Form.Label>Last Name:</Form.Label>
-                                                <Form.Control type="text" value={this.props.data.lastName} name="lname" />
+                                                <Form.Control type="text" defaultValue={this.props.data.lastName} name="lname" />
                                             </Form.Group>
 
                                             <Form.Group controlId="DOB">
                                                 <Form.Label>Date of Birth:</Form.Label>
-                                                <Form.Control type="date" name="dob" value={this.props.data.dob} />
+                                                <Form.Control type="date" name="dob" defaultValue={this.props.data.dob} />
                                             </Form.Group>
 
                                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                                 <Form.Label>Email:</Form.Label>
-                                                <Form.Control type="email" value={this.props.data.email} name="email" />
+                                                <Form.Control type="email" defaultValue={this.props.data.email} name="email" />
                                             </Form.Group>
-                                        </fieldset>
-                                            <Button variant="danger" onClick={this.enableForm.bind(this)}>
-                                                Edit Data
-                                            </Button>
-                                            <span>   </span>
+
                                             <Button variant="success" type="submit">
                                                 Submit Data for Verification
+                                            </Button>
+                                            
+                                        </fieldset>
+                                            <p>&nbsp;</p>
+                                            <Button variant="danger" onClick={this.enableForm.bind(this)}>
+                                                Edit Data
                                             </Button>
                                     </Form>
                                 </div>
