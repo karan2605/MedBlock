@@ -111,7 +111,7 @@ class NotificationsPatient extends Component {
                 console.error(error)
                 return
                 }
-                this.state.contract.methods.setHash(result[0].hash, this.props.data.nhsNumber).send({from: this.props.data.account})
+                this.state.contract.methods.setHash(result[0].hash, this.props.data.nhsNumber, this.props.data.gp).send({from: this.props.data.account})
                 .then(this.setState({show : true}))
             })  
         }
@@ -147,7 +147,7 @@ class NotificationsPatient extends Component {
                 console.error(error)
                 return
                 }
-                this.state.contract.methods.setHash(result[0].hash, this.props.data.nhsNumber).send({from: this.props.data.account})
+                this.state.contract.methods.setHash(result[0].hash, this.props.data.nhsNumber, this.props.data.gp).send({from: this.props.data.account})
                 .then(this.setState({show : true}))
             })  
         }  
@@ -157,7 +157,7 @@ class NotificationsPatient extends Component {
         const notification_elements = [];
         const notifications = this.props.data.notifications
         
-        for (let i = 0; i < notifications.length-1; i++) {
+        for (let i = 0; i < 1; i++) {
             const notification = JSON.parse(notifications[i])
             if(notification.category === "Appointment") {
                 notification_elements.push(
@@ -170,11 +170,12 @@ class NotificationsPatient extends Component {
                 </tr>)
             }
             else {
+                console.log(notification.medicine)
                 notification_elements.push(
                 <tr>
                     <td>{notification.date}</td>
                     <td>{notification.category}</td>
-                    <td>Validate Prescription with {notification.issuedBy} at {notification.pharmacy}. Notes: {notification.medicine}</td>
+                    <td>Validate Prescription with {notification.issuedBy} at {notification.pharmacy}. Medicine: {notification.medicine[0].medicine} Dosage Notes : {notification.medicine[0].dosageNotes}</td>
                     <td><Button variant="success" onClick={() => { this.addData(notification) }}>Validate</Button>
                     <Button variant="danger" onClick={() => { this.showQuery(notification) }}>Query</Button></td>
                 </tr>)
@@ -199,7 +200,7 @@ class NotificationsPatient extends Component {
     async submitQuery(event) {
         event.preventDefault();
 
-        const notes = event.target[1].values
+        const notes = event.target[0].values
         console.log(notes)
 
         var today = new Date();
