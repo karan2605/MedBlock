@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { Nav, Button } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -25,10 +25,10 @@ class MedicalData extends Component {
     }
 
     submitRequest(event) {
-        // find the data that was changed on the form by comparing it to props variables
-        // Create a notification to the doctor of the gp
-        // Add notification to the record
-        // Display modal showing pending transaction
+        // find the data that was changed on the form by comparing it to props variables 
+        // Create a notification to the doctor of the gp 
+        // Add notification to the record 
+        // Display modal showing pending transaction 
     }
 
     enableForm() {
@@ -88,13 +88,6 @@ class MedicalData extends Component {
                                                 <Select options={this.options} isMulti closeMenuOnSelect={false} components={makeAnimated()} value={this.props.data.existingHealth} isDisabled={(this.state.disabled) ? "disabled" : ""}/>
                                             </Form.Group>
                                         </fieldset>
-                                            <Button variant="danger" onClick={this.enableForm.bind(this)}>
-                                                Edit Data
-                                            </Button>
-                                            <span>   </span>
-                                            <Button variant="success" type="submit">
-                                                Submit Data for Verification
-                                            </Button>
                                     </Form>
                                 </div>
                             </div>
