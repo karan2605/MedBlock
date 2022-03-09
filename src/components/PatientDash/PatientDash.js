@@ -142,7 +142,7 @@ class PatientDash extends Component {
                 else {
                     notification_elements.push(
                     <Card>
-                        <Card.Body><b>{notification.datetime}</b> <br></br> Validate Prescription issued by {notification.issuedBy}</Card.Body>
+                        <Card.Body><b>{notification.date}</b> <br></br> Validate Prescription issued by {notification.issuedBy}</Card.Body>
                     </Card>)
                 }
             }
@@ -158,8 +158,8 @@ class PatientDash extends Component {
     fetchAppointments() {
         const appointment_elements = [];
         
-        if(this.state.appointments.appointment != null && this.state.appointments.appointment.length > 0) {
-            const appointments = this.state.appointments.appointment
+        if(this.state.appointments != null && this.state.appointments.length > 0) {
+            const appointments = this.state.appointments
             for (let i = 0; i < appointments.length-1; i++) {
                 const appointment = JSON.parse(appointments[i])
                 appointment_elements.push(
