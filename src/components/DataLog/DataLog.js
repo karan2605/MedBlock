@@ -14,7 +14,7 @@ class DataLog extends Component {
             access_elements.push(
             <tr>
                 <td>{accesses.datetime}</td>
-                <td>{accesses.type} Accessed by {accesses.name}</td>
+                <td>{accesses.type} Accessed by {accesses.accessor}</td>
             </tr>)
         }
 
