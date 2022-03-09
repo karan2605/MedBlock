@@ -30,7 +30,8 @@ class Createaccount extends Component {
             nhsNumber: null,
             role: null,
             place: null,
-            existingHealth: null
+            existingHealth: null,
+            gp : null
         };
 
         this.options = [
@@ -91,6 +92,8 @@ class Createaccount extends Component {
     onSubmitPatient = (event) => {
         event.preventDefault();
 
+        this.setState({ gp : event.target[6].value})
+
         const data = new File([JSON.stringify({
             id: this.state.account,
             firstName: event.target[1].value,
@@ -140,7 +143,7 @@ class Createaccount extends Component {
             console.error(error)
             return
             }
-            this.state.contract.methods.setHash(result[0].hash, this.state.nhsNumber).send({from: this.state.account})
+            this.state.contract.methods.setHash(result[0].hash, this.state.nhsNumber, this.state.gp).send({from: this.state.account})
             .then(window.location.replace("http://localhost:3000/createaccount/success"))
         })
     };
@@ -181,7 +184,7 @@ class Createaccount extends Component {
             console.error(error)
             return
             }
-            this.state.contract.methods.setHash(result[0].hash, this.state.nhsNumber).send({from: this.state.account})
+            this.state.contract.methods.setHash(result[0].hash, this.state.nhsNumber, this.state.place).send({from: this.state.account})
             .then(window.location.replace("http://localhost:3000/createaccount/success"))
         })
     };
@@ -304,12 +307,12 @@ class Createaccount extends Component {
 
                                         <Form.Group className="mb-3" controlId="formMedicalCond">
                                             <Form.Label>Place of Work</Form.Label>
-                                            <Select options={this.placeOfWork} components={makeAnimated()} onChange={this.setPlace}/>
+                                            <Select options={this.placeOfWork} components={makeAnimated()} onChange={this.setPlace.bind(this)}/>
                                         </Form.Group>
 
                                         <Form.Group className="mb-3" controlId="formMedicalCond">
                                             <Form.Label>Role</Form.Label>
-                                            <Select options={this.medicalRole} components={makeAnimated()} onChange={this.setRole}/>
+                                            <Select options={this.medicalRole} components={makeAnimated()} onChange={this.setRole.bind(this)}/>
                                         </Form.Group>
 
                                         <Button variant="danger" type="submit">
