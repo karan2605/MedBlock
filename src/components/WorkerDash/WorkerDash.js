@@ -79,8 +79,6 @@ class WorkerDash extends Component {
         const raw_data = await ipfs.cat(hash)
         const data = JSON.parse(raw_data)
 
-        console.log(data)
-
         this.setState({dob : data.dob, 
             firstName : data.firstName, 
             lastName : data.lastName, 
