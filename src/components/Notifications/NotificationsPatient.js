@@ -170,7 +170,6 @@ class NotificationsPatient extends Component {
                 </tr>)
             }
             else {
-                console.log(notification.medicine)
                 notification_elements.push(
                 <tr>
                     <td>{notification.date}</td>
