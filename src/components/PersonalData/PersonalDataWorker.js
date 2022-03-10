@@ -34,13 +34,13 @@ class PersonalDataWorker extends Component {
             
             <div className='d-flex m-2 rounded-6 align-items-stretch'>
                 <div className='d-flex p-3'>
-                    <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills" >
-                        <Nav.Link><Link to= "/workerdash">Dashboard</Link></Nav.Link>
-                        <Nav.Link active>Personal Data</Nav.Link>
-                        <Nav.Link>Patient Data</Nav.Link>
-                        <Nav.Link><Link to= "/workerdash/notifications">Notifications</Link></Nav.Link>
-                        <Nav.Link><Link to= "/workerdash/adddata">Add New Data</Link></Nav.Link>
-                    </Nav>
+                <Nav className="flex-column pt-2 justify-content-start align-items-stretch bg-light rounded-3" variant="pills" >
+                            <Nav.Link as={Link} to="/workerdash">Dashboard</Nav.Link>
+                            <Nav.Link active>Personal Data</Nav.Link>
+                            <Nav.Link as={Link} to="/workerdash/patientdata">Patient Data</Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash/notifications">Notifications</Nav.Link>
+                            <Nav.Link as={Link} to= "/workerdash/adddata">Add New Data</Nav.Link>
+                        </Nav>
                 </div>
                 
                 <div className="d-flex flex-lg-fill justify-content-around p-3 rounded-3 bg-light">
