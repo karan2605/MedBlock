@@ -80,12 +80,12 @@ class PersonalDataWorker extends Component {
 
                                         <Form.Group className="mb-3" controlId="formBasicLastName">
                                             <Form.Label>Place of Work:</Form.Label>
-                                            <Form.Control type="text" value={this.props.data.placeOfWork} name="lname" />
+                                            <Form.Control type="text" value={this.props.data.placeOfWork.label} name="lname" />
                                         </Form.Group>
 
                                         <Form.Group className="mb-3" controlId="formBasicLastName">
                                             <Form.Label>Role:</Form.Label>
-                                            <Form.Control type="text" value={this.props.data.role} name="lname" />
+                                            <Form.Control type="text" value={this.props.data.role.label} name="lname" />
                                         </Form.Group>
                                     </fieldset>
                                         <Button variant="danger" onClick={this.enableForm.bind(this)}>
