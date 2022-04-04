@@ -84,6 +84,16 @@ class AddData extends Component {
         const raw_data = await ipfs.cat(hash)
         const data = JSON.parse(raw_data)
 
+        const appointment = [JSON.stringify({
+            datetime : "15-03-2022 from : 10:00 to: 11:00",
+            category : "Appointment",
+            place : place,
+            patient : data.firstName + " " + data.lastName,
+            notes : notes
+        })]
+
+        this.props.data.appointment = appointment
+
         // add notification to record
         const record = new File([JSON.stringify({
             id: data.id,
