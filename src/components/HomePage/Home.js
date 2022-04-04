@@ -59,8 +59,8 @@ class HomePage extends Component {
                         <div class="card bg-light border-0 h-100">
                             <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-calendar4-week"></i></div>
-                                <h2 class="fs-4 fw-bold">Set Appointments</h2>
-                                <p class="mb-0">Arrange appointments as a patient or healthcare worker</p>
+                                <h2 class="fs-4 fw-bold">Set Appointments and Prescriptions</h2>
+                                <p class="mb-0">Arrange appointments and create prescriptions as a healthcare worker</p>
                             </div>
                         </div>
                     </div>
