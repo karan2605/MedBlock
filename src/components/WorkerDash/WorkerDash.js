@@ -96,7 +96,6 @@ class WorkerDash extends Component {
         this.props.data.firstName = data.firstName
         this.props.data.lastName = data.lastName
         this.props.data.gp = data.gp
-        this.props.data.appointments = data.appointments
         this.props.data.requests = data.requests
         this.props.data.notifications = data.notifications
         this.props.data.placeOfWork = data.placeOfWork
@@ -117,6 +116,7 @@ class WorkerDash extends Component {
                         <Card.Body><b>{notification.datetime}</b> <br></br> Validate Query from {notification.patient}</Card.Body>
                     </Card>)
                 }
+                
                 else {
                     notification_elements.push(
                     <Card>
@@ -136,7 +136,7 @@ class WorkerDash extends Component {
     fetchAppointments() {
         const appointment_elements = [];
         
-        if(this.state.appointments != null && this.state.appointments.length > 0) {
+        if(this.props.data.appointment != null && this.props.data.appointment.length > 0) {
             const appointments = this.state.appointments
             for (let i = 0; i < appointments.length-1; i++) {
                 const appointment = JSON.parse(appointments[i])
