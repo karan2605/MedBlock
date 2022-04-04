@@ -169,6 +169,14 @@ class NotificationsPatient extends Component {
                     <Button variant="danger" onClick={() => { this.showQuery(notification) }}>Query</Button></td>
                 </tr>)
             }
+            else if(notification.category === "Query Response"){
+                notification_elements.push(
+                <tr>
+                    <td>{notification.datetime}</td>
+                    <td>{notification.category}</td>
+                    <td>Query Rejected from {notification.doctor}. {notification.notification}</td>
+                </tr>)
+            }
             else {
                 notification_elements.push(
                 <tr>
@@ -199,12 +207,11 @@ class NotificationsPatient extends Component {
     async submitQuery(event) {
         event.preventDefault();
 
-        const notes = event.target[0].values
-        console.log(notes)
+        const notes = event.target[0].value
 
         var today = new Date();
         var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
-        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        var time = today.getHours() + ":" + today.getMinutes();
         var dateTime = date+' '+time;
 
         //add notification to record
