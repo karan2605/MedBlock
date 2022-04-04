@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { Nav, Card, Button } from 'react-bootstrap';
+import { Nav, Card } from 'react-bootstrap';
 import "./style.css";
 import CreateAccount from '../../abis/CreateAccount.json';
 
@@ -139,6 +139,12 @@ class PatientDash extends Component {
                         <Card.Body><b>{notification.datetime}</b> <br></br> Validate Appointment with {notification.doctor}</Card.Body>
                     </Card>)
                 }
+                else if(notification.category === "Query Response") {
+                    notification_elements.push(
+                    <Card>
+                        <Card.Body><b>{notification.datetime}</b> <br></br> Query Response from {notification.doctor}</Card.Body>
+                    </Card>)
+                }
                 else {
                     notification_elements.push(
                     <Card>
@@ -185,7 +191,7 @@ class PatientDash extends Component {
                 const access = JSON.parse(accesses[i])
                 access_elements.push(
                 <Card>
-                    <Card.Body><b>{access.datetime}</b> <br></br> {access.type} accessed by {access.accessor}</Card.Body>
+                    <Card.Body><b>{access.datetime}</b> <br></br> Data accessed by {access.accessor}</Card.Body>
                 </Card>)
             }
 
@@ -230,7 +236,7 @@ class PatientDash extends Component {
                             </Card>
 
                             <Card className="card text-center rounded-6">
-                            <Card.Header as="h5">Appointments <Button variant="primary">Details</Button></Card.Header>
+                            <Card.Header as="h5">Appointments</Card.Header>
                                 {this.fetchAppointments()}
                             </Card>
                             
