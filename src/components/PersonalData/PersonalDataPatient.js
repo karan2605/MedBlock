@@ -4,17 +4,27 @@ import { Nav, Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import CreateAccount from '../../abis/CreateAccount.json';
 
+// Connect to the IPFS using Infura
 const ipfsClient = require('ipfs-http-client')
-const Web3 = require('web3');
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+
+// Load Web3 module
+const Web3 = require('web3');
 
 class PersonalDataPatient extends Component {
 
+    /**
+     * Calls functions as soon as page is loaded
+     */
     async componentDidMount() {
         await this.loadBlockchainData()
         await this.loadWeb3()
     }
 
+    /**
+     * Defines state variables to be used on page
+     * @param {*} props - Global page properties object
+     */
     constructor(props) {
         super(props)
 
@@ -24,6 +34,10 @@ class PersonalDataPatient extends Component {
         };
     }
 
+    /**
+     * Boilerplate code to load objects for MetaMask and Web3 onto the webpage
+     * @returns True or False dependent if all MetaMask and Web3 objects has successfully loaded
+     */
     async loadWeb3() {
         if (window.ethereum) {
             await window.ethereum.request({ method : 'eth_requestAccounts' });
@@ -39,6 +53,9 @@ class PersonalDataPatient extends Component {
         }
     }
 
+    /**
+     * Boilerplate code to load smart contract functions onto page to be called upon
+     */
     async loadBlockchainData() {
         const web3 = new Web3(window.ethereum);
         const networkId = await web3.eth.net.getId();
@@ -54,12 +71,14 @@ class PersonalDataPatient extends Component {
         }
     }   
 
+    /**
+     * Find the data that was changed on the form by comparing it to props variables.
+     * Create a notification to the receptionist of the gp
+     * Add notification to the record and upload record back to IPFS
+     * Display modal showing pending transaction
+     * @param {*} event - Object containing attributes of submitted form
+     */
     async submitRequest(event) {
-        // find the data that was changed on the form by comparing it to props variables
-        // Create a notification to the receptionist of the gp
-        // Add notification to the record
-        // Display modal showing pending transaction
-
         event.preventDefault();
         const changed = []
 

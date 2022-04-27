@@ -3,18 +3,28 @@ import { Link } from "react-router-dom";
 import { Nav, Card } from 'react-bootstrap';
 import CreateAccount from '../../abis/CreateAccount.json';
 
-const Web3 = require('web3');
+// Connect to the IPFS using Infura
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
+// Load Web3 module
+const Web3 = require('web3');
+
 class WorkerDash extends Component {
 
+    /**
+     * Calls functions as soon as page is loaded
+     */
     async componentDidMount() {
         await this.loadWeb3()
         await this.loadBlockchainData()
         await this.fetchData()
     }
 
+    /**
+     * Defines state variables to be used on page
+     * @param {*} props - Global page properties object
+     */
     constructor(props) {
         super(props)
         this.state = { 
@@ -44,6 +54,10 @@ class WorkerDash extends Component {
         };
     }
 
+    /**
+     * Boilerplate code to load objects for MetaMask and Web3 onto the webpage
+     * @returns True or False dependent if all MetaMask and Web3 objects has successfully loaded
+     */
     async loadWeb3() {
         if (window.ethereum) {
             const accounts =  await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -60,6 +74,9 @@ class WorkerDash extends Component {
         }
     }
 
+    /**
+     * Boilerplate code to load smart contract functions onto page to be called upon
+     */
     async loadBlockchainData() {
         const web3 = new Web3(window.ethereum);
         const networkId = await web3.eth.net.getId();
@@ -73,6 +90,14 @@ class WorkerDash extends Component {
         }
     }
 
+    /**
+     * Fetches the medical workers record from the IPFS. The getHash smart contract method
+     * is first called to fetch the workers CID, the cat method provided by js-IPFS then 
+     * fetches the medical record. State variables are then assigned for the workers 
+     * details to be used throughout the webpage. Attributes are also assigned to the props 
+     * object to access the workers data throughout the login session without having to 
+     * query the IPFS again.
+     */
     async fetchData() {
         const getHash = this.state.contract.methods.getHash().call({from: this.state.account})
         const hash = await getHash
@@ -102,6 +127,13 @@ class WorkerDash extends Component {
         this.props.data.role = data.role
     }
 
+    /**
+     * Fetches workers notifications from props and formats to be displayed on webpage.
+     * Notifications may contain differing content so each format must be organised on the 
+     * page appropriately. HTML table rows are created to organise the notifications, the 
+     * rows are then appended to an array.
+     * @returns List of HTML table row elements
+     */
     fetchNotifications() {
         const notification_elements = [];
         const notifications = this.state.notifications
@@ -133,6 +165,12 @@ class WorkerDash extends Component {
         )
     }
 
+    /**
+     * Fetches workers appointments from props and formats to be displayed on webpage.
+     * HTML table rows are created to organise the appointments, the 
+     * rows are then appended to an array.
+     * @returns List of HTML table row elements
+     */
     fetchAppointments() {
         const appointment_elements = [];
         

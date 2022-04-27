@@ -19,6 +19,10 @@ import AccessPersonal from './AccessPersonal/AccessPersonal';
 
 class App extends Component {
 
+  /**
+   * Defines state variables to be used on page
+   * @param {*} props - Global page properties object
+   */
   constructor(props) {
     super(props);
 
@@ -34,7 +38,14 @@ class App extends Component {
       requests : null
     };
   }
-    
+  
+  /**
+   * This is the root page of the website which defines the structure of the website
+   * using the React-Router library, the URL path for each page is also defined within
+   * each Route tag. Finally the props variables are passed to each page through the Route
+   * element.
+   * @returns 
+   */
   render() {
     return (
         <Router>

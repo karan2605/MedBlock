@@ -3,17 +3,27 @@ import { Link, NavLink } from "react-router-dom";
 import { Nav, Table, Button } from 'react-bootstrap';
 import CreateAccount from '../../abis/CreateAccount.json';
 
-const Web3 = require('web3');
-const ipfsClient = require('ipfs-http-client');
+// Connect to the IPFS using Infura
+const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+
+// Load Web3 module
+const Web3 = require('web3');
 
 class NotificationsWorker extends Component {
 
+    /**
+     * Calls functions as soon as page is loaded
+     */
     async componentDidMount() {
         await this.loadBlockchainData()
         await this.loadWeb3()
     }
 
+    /**
+     * Defines state variables to be used on page
+     * @param {*} props - Global page properties object
+     */
     constructor(props) {
         super(props);
 
@@ -22,6 +32,10 @@ class NotificationsWorker extends Component {
         }
     }
 
+    /**
+     * Boilerplate code to load objects for MetaMask and Web3 onto the webpage
+     * @returns True or False dependent if all MetaMask and Web3 objects has successfully loaded
+     */
     async loadWeb3() {
         if (window.ethereum) {
             await window.ethereum.request({ method : 'eth_requestAccounts' });
@@ -36,7 +50,10 @@ class NotificationsWorker extends Component {
             return false;
         }
     }
-
+    
+    /**
+     * Boilerplate code to load smart contract functions onto page to be called upon
+     */
     async loadBlockchainData() {
         const web3 = new Web3(window.ethereum);
         const networkId = await web3.eth.net.getId();
@@ -52,6 +69,14 @@ class NotificationsWorker extends Component {
         }
     }
 
+    /**
+     * If medical worker rejects notification from patients, the patient must recieve a 
+     * notification informing them of the rejected request. The notification JSON object is
+     * created and the patients medical record is fetched from the IPFS, the notification 
+     * object is appended to the patients medical record and then uploaded back to the IPFS 
+     * and the CID is updated on the blockchain.
+     * @param {*} not_data 
+     */
     async rejectData(not_data) {
         var today = new Date();
         var date = today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear();
@@ -98,6 +123,13 @@ class NotificationsWorker extends Component {
         })
     }
 
+    /**
+     * Fetches patients notifications from props and formats to be displayed on webpage.
+     * Notifications may contain differing content so each format must be organised on the 
+     * page appropriately. HTML table rows are created to organise the notifications, the 
+     * rows are then appended to an array.
+     * @returns List of HTML table row elements
+     */
     fetchNotifications() {
         const notification_elements = [];
         const notifications = this.props.data.notifications

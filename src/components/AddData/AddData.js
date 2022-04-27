@@ -6,17 +6,27 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import CreateAccount from '../../abis/CreateAccount.json';
 
+// Connect to the IPFS using Infura
 const ipfsClient = require('ipfs-http-client')
 const Web3 = require('web3');
+
+// Load Web3 module
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class AddData extends Component {
 
+    /**
+     * Calls functions as soon as page is loaded
+     */
     async componentDidMount() {
         await this.loadBlockchainData()
         await this.loadWeb3()
     }
 
+    /**
+     * Defines state variables to be used on page
+     * @param {*} props - Global page properties object
+     */
     constructor(props) {
         super(props)
 
@@ -28,6 +38,10 @@ class AddData extends Component {
         };
     }
 
+    /**
+     * Boilerplate code to load objects for MetaMask and Web3 onto the webpage
+     * @returns True or False dependent if all MetaMask and Web3 objects has successfully loaded
+     */
     async loadWeb3() {
         if (window.ethereum) {
             await window.ethereum.request({ method : 'eth_requestAccounts' });
@@ -43,6 +57,9 @@ class AddData extends Component {
         }
     }
 
+    /**
+     * Boilerplate code to load smart contract functions onto page to be called upon
+     */
     async loadBlockchainData() {
         const web3 = new Web3(window.ethereum);
         const networkId = await web3.eth.net.getId();
@@ -58,7 +75,14 @@ class AddData extends Component {
         }
     }   
 
-    async onSubmitAppointment(event)  {
+    /**
+     * Called upon to submit a appointment verification notifcation to a users medical record.
+     * Notification first created as a JSON object. The blockchain address and IPFS CID for the
+     * patient is then retrieved. Notification is then concatenated to patients existing record
+     * and then uploaded back to the IPFS. Updated CID is also updated on the blockchain.
+     * @param {*} event - Object containing attributes of submitted form
+     */
+    async onSubmitAppointment(event) {
         event.preventDefault();
         const validatorID = event.target[5].value;
         const notes = event.target[6].value;
@@ -83,16 +107,6 @@ class AddData extends Component {
         const hash = await getHash
         const raw_data = await ipfs.cat(hash)
         const data = JSON.parse(raw_data)
-
-        const appointment = [JSON.stringify({
-            datetime : "15-03-2022 from : 10:00 to: 11:00",
-            category : "Appointment",
-            place : place,
-            patient : data.firstName + " " + data.lastName,
-            notes : notes
-        })]
-
-        this.props.data.appointment = appointment
 
         // add notification to record
         const record = new File([JSON.stringify({
@@ -123,6 +137,13 @@ class AddData extends Component {
         })
     }
 
+    /**
+     * Called upon to submit a prescription verification notifcation to a users medical record.
+     * Notification first created as a JSON object. The blockchain address and IPFS CID for the
+     * patient is then retrieved. Notification is then concatenated to patients existing record
+     * and then uploaded back to the IPFS. Updated CID is also updated on the blockchain.
+     * @param {*} event - Object containing attributes of submitted form
+     */
     async onSubmitPrescription(event) {
         event.preventDefault();
 
@@ -182,6 +203,11 @@ class AddData extends Component {
         })
     }
 
+    /**
+     * Called upon to dynamically add and remove form fields to prescription form.
+     * Used to add and remove medicines from the prescription.
+     * @returns React bootstrap form objects
+     */
     createUI() {
         return this.state.values.map((el, i) => 
             <div key={i}>

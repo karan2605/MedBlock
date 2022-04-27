@@ -3,17 +3,27 @@ import { Link } from "react-router-dom";
 import { Nav, Table, Button, Modal, Form } from 'react-bootstrap';
 import CreateAccount from '../../abis/CreateAccount.json';
 
+// Connect to the IPFS using Infura
 const ipfsClient = require('ipfs-http-client')
-const Web3 = require('web3');
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+
+// Load Web3 module
+const Web3 = require('web3');
 
 class NotificationsPatient extends Component {
 
+    /**
+     * Calls functions as soon as page is loaded
+     */
     async componentDidMount() {
         await this.loadBlockchainData()
         await this.loadWeb3()
     }
 
+    /**
+     * Defines state variables to be used on page
+     * @param {*} props - Global page properties object
+     */
     constructor(props) {
         super(props);
 
@@ -26,6 +36,10 @@ class NotificationsPatient extends Component {
         }
     }
 
+    /**
+     * Boilerplate code to load objects for MetaMask and Web3 onto the webpage
+     * @returns True or False dependent if all MetaMask and Web3 objects has successfully loaded
+     */
     async loadWeb3() {
         if (window.ethereum) {
             await window.ethereum.request({ method : 'eth_requestAccounts' });
@@ -45,6 +59,9 @@ class NotificationsPatient extends Component {
         this.setState({ show : false })
     };
 
+    /**
+     * Boilerplate code to load smart contract functions onto page to be called upon
+     */
     async loadBlockchainData() {
         const web3 = new Web3(window.ethereum);
         const networkId = await web3.eth.net.getId();
@@ -60,8 +77,12 @@ class NotificationsPatient extends Component {
         }
     }
 
+    /**
+     * Function called upon a successful verification of data. A React Bootstrap modal object is
+     * rendered to notify the user of the success.
+     * @returns React Bootstrap Modal object
+     */
     async showModal() {
-
         return (
             <Modal show={this.state.show} onHide={this.handleClose}>
                 <Modal.Header closeButton>
@@ -77,6 +98,14 @@ class NotificationsPatient extends Component {
         )
     }
 
+    /**
+     * Adds the appointment or prescription permanently to the users medical record.
+     * Both appointments and prescriptions contain different fields and data thus an 
+     * outer if-else block is implemented to separate this. The data is appended to the
+     * patients existing medical record then uploaded to the IPFS, the IPFS CID is then
+     * updated on the blockchain.
+     * @param {*} notification - JSON object containing all notification data
+     */
     async addData(notification) {
 
         if(notification.category === "Appointment") {
@@ -153,6 +182,13 @@ class NotificationsPatient extends Component {
         }  
     }
 
+    /**
+     * Fetches patients notifications from props and formats to be displayed on webpage.
+     * Notifications may contain differing content so each format must be organised on the 
+     * page appropriately. HTML table rows are created to organise the notifications, the 
+     * rows are then appended to an array.
+     * @returns List of HTML table row elements
+     */
     fetchNotifications() {
         const notification_elements = [];
         const notifications = this.props.data.notifications
@@ -204,6 +240,13 @@ class NotificationsPatient extends Component {
         this.setState({ showModal : false})
     }
 
+    /**
+     * Appends a query notification to the sender of the queried notification (medical worker)
+     * The notification JSON object is first created, the CID of the medical worker that sent 
+     * the notification is fetched and the notification is added to the workers record. Finally
+     * the updated record is uploaded back to the IPFS and the CID is updated on the blockchain. 
+     * @param {*} event - Object containing attributes of submitted form 
+     */
     async submitQuery(event) {
         event.preventDefault();
 

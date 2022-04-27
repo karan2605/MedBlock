@@ -6,17 +6,27 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import CreateAccount from '../../abis/CreateAccount.json';
 
+// Connect to the IPFS using Infura
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+
+// Load Web3 module
 const Web3 = require('web3');
 
 class AccessPersonal extends Component {
 
+    /**
+     * Calls functions as soon as page is loaded
+     */
     async componentDidMount() {
         await this.loadWeb3()
         await this.loadBlockchainData()
     }
 
+    /**
+     * Defines state variables to be used on page
+     * @param {*} props - Global page properties object
+     */
     constructor(props) {
         super(props)
 
@@ -38,6 +48,10 @@ class AccessPersonal extends Component {
         };
     }
 
+    /**
+     * Boilerplate code to load objects for MetaMask and Web3 onto the webpage
+     * @returns True or False dependent if all MetaMask and Web3 objects has successfully loaded
+     */
     async loadWeb3() {
         if (window.ethereum) {
             await window.ethereum.request({ method : 'eth_requestAccounts' });
@@ -53,6 +67,9 @@ class AccessPersonal extends Component {
         }
     }
 
+    /**
+     * Boilerplate code to load smart contract functions onto page to be called upon
+     */
     async loadBlockchainData() {
         const web3 = new Web3(window.ethereum);
         const networkId = await web3.eth.net.getId();
@@ -68,6 +85,13 @@ class AccessPersonal extends Component {
         }
     }
 
+    /**
+     * Finds a patient based on the NHS number entered by the user.
+     * Calls upon a smart contract function to first fetch the blockchain address,
+     * a second function then fetches the IPFS CID.
+     * A notification is added to the users record to notify them of the data access.
+     * @param {*} event - Object containing attributes of submitted form
+     */
     async findPatient(event) {
         event.preventDefault();
 
@@ -143,6 +167,10 @@ class AccessPersonal extends Component {
         }
     }
 
+    /**
+     * Handles the opening and closing of the pop-out modal window
+     * which appears if no user with the specified NHS number is found.
+     */
     handleClose() {
         this.setState({ showModal : false})
     }

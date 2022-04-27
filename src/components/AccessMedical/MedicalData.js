@@ -13,7 +13,8 @@ class MedicalData extends Component {
         this.state = { 
             disabled : true
         };
-
+        
+        // Create options for medical conditions form entry
         this.options = [
             { value: 'Diabetes', label: 'Diabetes' },
             { value: 'High Blood Pressure', label: 'High Blood Pressure' },
@@ -71,6 +72,7 @@ class MedicalData extends Component {
                                             <Form.Label>NHS Number:</Form.Label>
                                             <Form.Control type="text" value={this.props.data.nhsNumber} name="nhsNumber" disabled/>
                                         </Form.Group>
+                                        
                                         <fieldset disabled={(this.state.disabled) ? "disabled" : ""}>
                                             <Form.Group className="mb-3" controlId="formBasicGpName">
                                                 <Form.Label>GP:</Form.Label>
@@ -81,7 +83,6 @@ class MedicalData extends Component {
                                                 <Form.Label>Blood Group:</Form.Label>
                                                 <Form.Control type="text" value={this.props.data.bloodGroup} name="bloodgroup"/>
                                             </Form.Group>
-                                            
                                             
                                             <Form.Group className="mb-3" controlId="formMedicalCond">
                                                 <Form.Label>Existing Health Conditions</Form.Label>

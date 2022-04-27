@@ -4,6 +4,12 @@ import { Nav, Table } from 'react-bootstrap';
 
 class DataLog extends Component {
 
+    /**
+     * Generates a sequence of table row objects in HTML to format data accesses. 
+     * The access data stored as a list is fetched from the users record using props,
+     * the list is iterated through where the table rows are generated and added to an array.
+     * @returns List of HTML table row elements
+     */
     fetchAccesses() {
         const access_elements = [];
         const requests = this.props.data.requests

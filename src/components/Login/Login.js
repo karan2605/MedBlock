@@ -3,11 +3,21 @@ import { Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import './Style.css';
 
+/**
+ * Async function to check the patients login credentials on MetaMask and 
+ * redirect the user to their dashboard upon successful verification by
+ * MetaMask
+ */
 async function handlePatientLogin(){
     await window.ethereum.request({ method: 'eth_requestAccounts' });
     window.location.replace("http://localhost:3000/patientdash");
 }
 
+/**
+ * Async function to check the medical workers login credentials on MetaMask and 
+ * redirect the user to their dashboard upon successful verification by
+ * MetaMask
+ */
 async function handleWorkerLogin(){
     await window.ethereum.request({ method: 'eth_requestAccounts' });
     window.location.replace("http://localhost:3000/workerdash");

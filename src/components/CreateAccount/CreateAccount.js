@@ -9,17 +9,27 @@ import CreateAccount from '../../abis/CreateAccount.json';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
+// Connect to the IPFS using Infura
 const ipfsClient = require('ipfs-http-client')
 const Web3 = require('web3');
+
+// Load Web3 module
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class Createaccount extends Component {
 
+    /**
+     * Calls functions as soon as page is loaded
+     */
     async componentDidMount() {
         await this.loadWeb3()
         await this.loadBlockchainData()
     }
     
+    /**
+     * Defines state variables to be used on page
+     * @param {*} props - Global page properties object
+     */
     constructor(props) {
         super(props)
         this.state = {
@@ -58,7 +68,11 @@ class Createaccount extends Component {
             { value: 'William Drive Medical Centre', label: 'William Drive Medical Centre' },
         ]
     }
-
+    
+    /**
+     * Boilerplate code to load objects for MetaMask and Web3 onto the webpage
+     * @returns True or False dependent if all MetaMask and Web3 objects has successfully loaded
+     */
     async loadWeb3() {
         if (window.ethereum) {
             await window.ethereum.request({ method : 'eth_requestAccounts' });
@@ -74,6 +88,9 @@ class Createaccount extends Component {
         }
     }
 
+    /**
+     * Boilerplate code to load smart contract functions onto page to be called upon
+     */
     async loadBlockchainData() {
         const web3 = new Web3(window.ethereum);
         const networkId = await web3.eth.net.getId();
@@ -89,6 +106,12 @@ class Createaccount extends Component {
         }
     }
 
+    /**
+     * Called upon when patient account creation form is submitted. The JSON medical record is 
+     * first created populated by the data entered in the form by the user. The record is then
+     * stored on the IPFS and the IPFS CID stored on the blockchain
+     * @param {*} event - Object containing attributes of submitted form
+     */
     onSubmitPatient = (event) => {
         event.preventDefault();
 
@@ -148,6 +171,12 @@ class Createaccount extends Component {
         })
     };
 
+    /**
+     * Called upon when medical worker account creation form is submitted. The JSON medical record is 
+     * first created populated by the data entered in the form by the user. The record is then
+     * stored on the IPFS and the IPFS CID stored on the blockchain
+     * @param {*} event - Object containing attributes of submitted form
+     */
     onSubmitStaff = (event) => {
         event.preventDefault();
 
