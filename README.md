@@ -1,4 +1,4 @@
-# CS310-Project - MedBlock: A Patient Medical Record System using Ethereum Blockchain
+# MedBlock: A Patient Medical Record System using Ethereum Blockchain
 
 ## Description:
 A scalable prototype website that allows patients to access their medical data and interact with doctors and other medical workers. Website is built using React.js and system back-end composing of the Ethereum Blockchain network and InterPlanetary File System (IPFS).
