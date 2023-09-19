@@ -13,5 +13,5 @@ Download the folder and open a terminal window in this directory, run `npm insta
  1. Open the Ganache program and create a new project, open `truffle-config.js` and change the host and port if different.
  2. Run `truffle migrate --reset` to deploy smart contract to the Ganache blockchain, once deployed the contracts should display on Ganache on the 'Contracts' tab.
  3. Run `npm run start` to start the Node.js server for the website. Once initiated, the local URL for the website will be provided.
- 4. Press `Ctrl-C` to stop the Node server once finished
+ 4. Press `Ctrl-C` to stop the Node server once finished.
   
